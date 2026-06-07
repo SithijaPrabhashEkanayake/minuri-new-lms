@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ICT Academy · Liquid Glass LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  /* backdrop */
+  --bg-sage:#dce8dd; --bg-cream:#f5f0e6; --bg-mist:#e9e6f2;
+  /* glass */
+  --glass-fill:rgba(255,255,255,0.55);
+  --glass-strong:rgba(255,255,255,0.74);
+  --glass-faint:rgba(255,255,255,0.38);
+  --glass-border:rgba(255,255,255,0.7);
+  --glass-blur:blur(28px) saturate(155%);
+  --glass-shadow:0 20px 60px rgba(60,70,120,0.18);
+  --glass-hi:inset 0 1px 0 rgba(255,255,255,0.85);
+  /* gradients */
+  --grad-hero:linear-gradient(135deg,#f7b9d2 0%,#c3b6f2 38%,#a8c4f5 66%,#9fe4d4 100%);
+  --grad-lav:linear-gradient(160deg,#b9c0f7,#8b9af0);
+  --grad-mint:linear-gradient(160deg,#bdeede,#7dd3c0);
+  --grad-rose:linear-gradient(160deg,#f9c6d8,#f4a6c0);
+  --grad-peach:linear-gradient(160deg,#fbe0b8,#f5c98a);
+  /* accents */
+  --blue:#4f7cff; --blue-d:#3b6cf6; --peach:#f5c98a; --rose:#ec84ad; --mint:#5ec8b5;
+  /* ink */
+  --ink-900:#1c1c2b; --ink-700:#3a3a4d; --ink-500:#6b6b80; --ink-300:#9a9aad;
+  --ok:#34b88a; --warn:#e0a93a; --danger:#e2607a;
+  /* shape */
+  --r-card:28px; --r-xl:36px; --r-input:16px; --r-pill:999px;
+  --maxw:1200px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink-700);
+  min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(1100px 700px at 12% 6%, #e3efe4 0%, transparent 55%),
+    radial-gradient(1000px 800px at 92% 22%, #fbf4e6 0%, transparent 55%),
+    radial-gradient(1200px 900px at 60% 100%, #ebe7f4 0%, transparent 60%),
+    linear-gradient(120deg,var(--bg-sage),var(--bg-cream) 55%,var(--bg-mist));
+  background-attachment:fixed;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,0.35) 50%,transparent 60%);
+}
+h1,h2,h3,h4{font-family:'Bricolage Grotesque',sans-serif;color:var(--ink-900);letter-spacing:-0.02em;line-height:1.08}
+a{color:inherit;text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+/* glass primitives */
+.glass{background:var(--glass-fill);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-border);border-radius:var(--r-card);box-shadow:var(--glass-shadow),var(--glass-hi)}
+.glass-strong{background:var(--glass-strong)}
+.muted{color:var(--ink-500)}
+.tiny{font-size:12px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-d)}
+
+/* pill buttons */
+.btn{font-family:inherit;font-weight:600;font-size:15px;border:none;cursor:pointer;
+  border-radius:var(--r-pill);padding:13px 26px;min-height:46px;display:inline-flex;align-items:center;
+  justify-content:center;gap:9px;transition:transform .18s,box-shadow .25s,filter .25s;letter-spacing:.01em}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;
+  box-shadow:0 10px 26px rgba(79,124,255,.42)}
+.btn-primary:hover{filter:brightness(1.06);transform:translateY(-2px);box-shadow:0 14px 32px rgba(79,124,255,.5)}
+.btn-peach{background:linear-gradient(135deg,#f8d49a,var(--peach));color:#6b4a17}
+.btn-peach:hover{transform:translateY(-2px);filter:brightness(1.04)}
+.btn-glass{background:var(--glass-faint);border:1px solid var(--glass-border);color:var(--ink-700);
+  backdrop-filter:var(--glass-blur)}
+.btn-glass:hover{background:rgba(255,255,255,.6);transform:translateY(-2px)}
+.btn-sm{padding:8px 16px;min-height:36px;font-size:13px}
+.btn-ok{background:linear-gradient(135deg,#4fd6a6,var(--ok));color:#fff}
+.btn-danger{background:linear-gradient(135deg,#f08aa0,var(--danger));color:#fff}
+.btn-block{width:100%}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:5px 12px;
+  border-radius:var(--r-pill);background:rgba(255,255,255,.55);border:1px solid var(--glass-border);color:var(--ink-700)}
+.chip-blue{background:rgba(79,124,255,.14);color:var(--blue-d);border-color:transparent}
+.chip-mint{background:rgba(94,200,181,.18);color:#268a76;border-color:transparent}
+.chip-rose{background:rgba(236,132,173,.16);color:#c14d7c;border-color:transparent}
+.chip-peach{background:rgba(245,201,138,.28);color:#9a6a1c;border-color:transparent}
+.chip-warn{background:rgba(224,169,58,.2);color:#9a6a14;border-color:transparent}
+
+/* inputs */
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--ink-700);margin-bottom:7px}
+.input,select,textarea{width:100%;font-family:inherit;font-size:15px;color:var(--ink-900);
+  background:rgba(255,255,255,.6);border:1px solid var(--glass-border);border-radius:var(--r-input);
+  padding:12px 16px;outline:none;transition:box-shadow .2s,border-color .2s}
+.input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,124,255,.22)}
+textarea{resize:vertical;min-height:90px}
+
+/* capsule toggle */
+.toggle{width:48px;height:28px;border-radius:var(--r-pill);background:rgba(120,130,170,.3);
+  position:relative;cursor:pointer;transition:background .25s;border:1px solid var(--glass-border)}
+.toggle.on{background:linear-gradient(135deg,var(--blue),var(--blue-d))}
+.toggle::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;
+  background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .25s}
+.toggle.on::after{transform:translateX(20px)}
+
+/* nav */
+.nav{position:sticky;top:14px;z-index:50;margin:14px auto 0;max-width:var(--maxw);
+  display:flex;align-items:center;gap:18px;padding:10px 14px 10px 22px;
+  background:var(--glass-faint);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);
+  border-radius:var(--r-pill);box-shadow:var(--glass-shadow)}
+.brand{font-family:'Bricolage Grotesque';font-weight:800;font-size:19px;color:var(--ink-900);display:flex;align-items:center;gap:9px}
+.brand .dot{width:26px;height:26px;border-radius:9px;background:var(--grad-hero);box-shadow:0 4px 10px rgba(120,100,200,.4)}
+.nav-links{display:flex;gap:4px;margin-left:auto}
+.nav-links a{font-size:14px;font-weight:600;color:var(--ink-700);padding:9px 16px;border-radius:var(--r-pill);transition:background .2s,color .2s;cursor:pointer}
+.nav-links a:hover{background:rgba(255,255,255,.5)}
+.nav-links a.active{background:#fff;color:var(--blue-d);box-shadow:0 4px 12px rgba(60,70,120,.12)}
+.nav-cta{margin-left:8px}
+.menu-btn{display:none;margin-left:auto;background:none;border:none;cursor:pointer;font-size:22px}
+
+/* sections */
+.section{padding:84px 0}
+.section-sm{padding:48px 0}
+.center{text-align:center}
+.grid{display:grid;gap:22px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center;padding:54px 0 40px}
+.hero h1{font-size:clamp(38px,5.4vw,66px);font-weight:800}
+.hero p.lead{font-size:17px;color:var(--ink-500);max-width:440px;margin:20px 0 26px}
+.hero-art{aspect-ratio:1/1.04;border-radius:var(--r-xl);background:var(--grad-hero);position:relative;overflow:hidden;
+  box-shadow:0 30px 80px rgba(150,120,200,.4),var(--glass-hi);border:1px solid rgba(255,255,255,.5)}
+.hero-art::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(120% 80% at 80% 100%,rgba(79,124,255,.55),transparent 55%),
+  linear-gradient(115deg,transparent 45%,rgba(255,255,255,.45) 52%,transparent 60%)}
+.hero-search{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.62);border:1px solid var(--glass-border);
+  border-radius:var(--r-pill);padding:7px 7px 7px 20px;max-width:430px;margin-bottom:18px}
+.hero-search input{border:none;background:none;flex:1;font-size:14px;outline:none;color:var(--ink-900)}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.stat-row{display:flex;gap:30px;margin-top:34px}
+.stat b{font-family:'Bricolage Grotesque';font-size:28px;color:var(--ink-900);display:block}
+.stat span{font-size:13px;color:var(--ink-500)}
+
+/* feature cards */
+.feat{padding:26px;position:relative;overflow:hidden}
+.feat .ico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:22px;margin-bottom:16px;color:#fff}
+.feat h3{font-size:19px;margin-bottom:8px}
+.feat p{font-size:14px;color:var(--ink-500)}
+.gc-lav{background:var(--grad-lav)} .gc-mint{background:var(--grad-mint)}
+.gc-rose{background:var(--grad-rose)} .gc-peach{background:var(--grad-peach)}
+.gc-blue{background:linear-gradient(135deg,var(--blue),var(--blue-d))}
+
+/* module / blog cards */
+.card-pad{padding:22px}
+.thumb{height:150px;border-radius:20px;margin-bottom:16px;position:relative;overflow:hidden}
+.thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 50%,rgba(255,255,255,.4) 58%,transparent 66%)}
+.price{font-family:'Bricolage Grotesque';font-weight:700;font-size:20px;color:var(--ink-900)}
+
+/* testimonial */
+.quote{font-family:'Bricolage Grotesque';font-size:22px;line-height:1.4;color:var(--ink-900)}
+
+/* footer */
+.footer{margin-top:40px;padding:40px 0 30px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px}
+.footer a{display:block;font-size:14px;color:var(--ink-500);padding:5px 0;cursor:pointer}
+.footer a:hover{color:var(--blue-d)}
+
+/* ===== LMS shell ===== */
+.lms-shell{display:grid;grid-template-columns:248px 1fr;gap:22px;max-width:var(--maxw);margin:18px auto 40px;padding:0 24px;min-height:80vh}
+.side{padding:20px 14px;height:fit-content;position:sticky;top:18px}
+.side-brand{display:flex;align-items:center;gap:10px;padding:6px 10px 18px;font-family:'Bricolage Grotesque';font-weight:800;font-size:17px}
+.side-nav a{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:14px;font-size:14px;font-weight:600;color:var(--ink-700);cursor:pointer;margin-bottom:3px;transition:background .2s,color .2s}
+.side-nav a:hover{background:rgba(255,255,255,.5)}
+.side-nav a.active{background:linear-gradient(135deg,rgba(79,124,255,.16),rgba(79,124,255,.06));color:var(--blue-d)}
+.side-nav .ico{width:20px;text-align:center}
+.topbar{display:flex;align-items:center;gap:16px;padding:14px 20px;margin-bottom:20px}
+.topbar h2{font-size:22px}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--grad-lav);display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px}
+.bell{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.5);border:1px solid var(--glass-border);display:grid;place-items:center;cursor:pointer;position:relative;font-size:18px}
+.bell .badge{position:absolute;top:-3px;right:-3px;width:18px;height:18px;border-radius:50%;background:var(--danger);color:#fff;font-size:10px;display:grid;place-items:center;font-weight:700}
+
+/* progress bar */
+.pbar{height:10px;border-radius:var(--r-pill);background:rgba(120,130,170,.18);overflow:hidden}
+.pbar i{display:block;height:100%;border-radius:var(--r-pill);background:linear-gradient(90deg,var(--mint),var(--blue));transition:width 1s ease}
+
+/* badges */
+.medal{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-size:26px;color:#fff;box-shadow:0 8px 20px rgba(0,0,0,.15);border:3px solid rgba(255,255,255,.7)}
+
+/* video player */
+.player{background:linear-gradient(160deg,#23243a,#15161f);border-radius:24px;aspect-ratio:16/9;position:relative;overflow:hidden;display:grid;place-items:center}
+.player .wm{position:absolute;top:14px;right:16px;font-size:11px;color:rgba(255,255,255,.4);font-weight:600;letter-spacing:.05em}
+.player .vc{position:absolute;top:14px;left:16px}
+.player .center-ico{width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,.16);backdrop-filter:blur(8px);display:grid;place-items:center;font-size:30px;color:#fff;cursor:pointer;border:1px solid rgba(255,255,255,.3)}
+.player .ctrls{position:absolute;bottom:0;left:0;right:0;padding:16px 18px;display:flex;align-items:center;gap:14px;background:linear-gradient(transparent,rgba(0,0,0,.5))}
+.player .ctrls .pbar{flex:1;background:rgba(255,255,255,.2)}
+.player .ctrls .pbar i{background:var(--blue)}
+.player .ctrls button{background:rgba(255,255,255,.18);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:15px}
+
+/* table */
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-500);padding:10px 12px;border-bottom:1px solid rgba(120,130,170,.18)}
+.tbl td{padding:12px;border-bottom:1px solid rgba(120,130,170,.12)}
+.tbl tr:hover td{background:rgba(255,255,255,.4)}
+
+/* login */
+.auth-wrap{display:grid;place-items:center;min-height:78vh;padding:30px 20px}
+.auth-card{width:100%;max-width:460px;padding:36px}
+.auth-tabs{display:flex;gap:10px;margin-bottom:26px}
+.auth-tabs button{flex:1;flex-direction:column;align-items:flex-start;text-align:left;gap:3px;padding:16px 18px;border-radius:20px;border:1px solid var(--glass-border);background:rgba(255,255,255,.4);cursor:pointer;transition:.2s;font-family:inherit}
+.auth-tabs button .t{font-weight:700;font-size:15px;color:var(--ink-900)}
+.auth-tabs button .s{font-size:12px;color:var(--ink-500)}
+.auth-tabs button.active{background:linear-gradient(135deg,rgba(79,124,255,.16),rgba(159,228,212,.16));border-color:var(--blue);box-shadow:0 8px 22px rgba(79,124,255,.18)}
+.auth-tabs button.peach.active{background:linear-gradient(135deg,rgba(245,201,138,.3),rgba(236,132,173,.16));border-color:var(--peach)}
+
+/* AI chat */
+.chat{display:flex;flex-direction:column;gap:14px;max-height:420px;overflow-y:auto;padding:6px}
+.msg{max-width:78%;padding:13px 16px;border-radius:18px;font-size:14px;line-height:1.55}
+.msg.u{align-self:flex-end;background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;border-bottom-right-radius:6px}
+.msg.a{align-self:flex-start;background:rgba(255,255,255,.66);border:1px solid var(--glass-border);border-bottom-left-radius:6px}
+.cite{font-size:11px;color:var(--blue-d);margin-top:7px;font-weight:600}
+
+/* quiz */
+.q-opt{padding:13px 16px;border-radius:14px;border:1px solid var(--glass-border);background:rgba(255,255,255,.45);cursor:pointer;margin-bottom:10px;font-size:14px;transition:.15s}
+.q-opt:hover{background:rgba(255,255,255,.7)}
+.q-opt.sel{border-color:var(--blue);background:rgba(79,124,255,.12)}
+.q-opt.correct{border-color:var(--ok);background:rgba(52,184,138,.14)}
+.q-opt.wrong{border-color:var(--danger);background:rgba(226,96,122,.12)}
+
+/* notifications popover */
+.pop{position:absolute;top:54px;right:0;width:300px;padding:14px;z-index:60}
+.pop .ni{padding:10px 8px;border-bottom:1px solid rgba(120,130,170,.12);font-size:13px}
+.pop .ni:last-child{border:none}
+
+.hidden{display:none!important}
+.fade-up{animation:fadeUp .5s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.row{display:flex;gap:12px;align-items:center}
+.between{justify-content:space-between}
+.wrap-flex{flex-wrap:wrap}
+.mt8{margin-top:8px}.mt16{margin-top:16px}.mt24{margin-top:24px}.mb8{margin-bottom:8px}.mb16{margin-bottom:16px}.mb24{margin-bottom:24px}
+
+@media(max-width:980px){
+  .hero{grid-template-columns:1fr}.hero-art{max-height:340px}
+  .g3,.g4{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .lms-shell{grid-template-columns:1fr}
+  .side{position:static;display:flex;overflow-x:auto;gap:6px}
+  .side-nav{display:flex;gap:6px}.side-brand{display:none}.side-nav a{white-space:nowrap;margin:0}
+}
+@media(max-width:640px){
+  .nav-links{display:none}.menu-btn{display:block}
+  .g2,.g3,.g4{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr}
+  .auth-tabs{flex-direction:column}.stat-row{flex-wrap:wrap;gap:18px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============================================================
+   ICT ACADEMY — Liquid Glass LMS (functional prototype)
+   Single-file demo: marketing site + gated LMS with role-based
+   dashboards, in-memory state. No external backend.
+   ============================================================ */
+
+const DB = {
+  modules:[
+    {id:'m1',title:'Python Programming Fundamentals',subj:'Programming',grade:'10',price:1500,dur:'6h 20m',grad:'gc-lav',inst:'Minuri A.'},
+    {id:'m2',title:'Computer Networks & the Internet',subj:'Networking',grade:'11',price:1800,dur:'5h 10m',grad:'gc-mint',inst:'Minuri A.'},
+    {id:'m3',title:'Database Concepts with SQL',subj:'Databases',grade:'11',price:1600,dur:'4h 45m',grad:'gc-rose',inst:'Minuri A.'},
+    {id:'m4',title:'Digital Literacy & ICT Ethics',subj:'Literacy',grade:'10',price:1200,dur:'3h 30m',grad:'gc-peach',inst:'Minuri A.'},
+    {id:'m5',title:'Web Development Basics (HTML/CSS)',subj:'Web',grade:'10',price:1700,dur:'5h 50m',grad:'gc-blue',inst:'Minuri A.'},
+    {id:'m6',title:'Logic, Algorithms & Flowcharts',subj:'Programming',grade:'11',price:1400,dur:'4h 05m',grad:'gc-lav',inst:'Minuri A.'},
+  ],
+  // student library: grants with view limits
+  library:[
+    {id:'m1',viewLimit:8,viewCount:3,progress:62},
+    {id:'m4',viewLimit:8,viewCount:1,progress:100},
+    {id:'m6',viewLimit:8,viewCount:5,progress:34},
+  ],
+  live:[
+    {id:'l1',topic:'Live: Loops & Iteration in Python',when:'Today · 5:00 PM',grade:'10',status:'upcoming'},
+    {id:'l2',topic:'Live: Subnetting Walkthrough',when:'Tomorrow · 4:30 PM',grade:'11',status:'upcoming'},
+    {id:'l3',topic:'Live: SQL Joins Masterclass',when:'Sat · 10:00 AM',grade:'11',status:'upcoming'},
+  ],
+  quiz:{
+    id:'q1',title:'Python Fundamentals — Quick Check',timer:'15:00',
+    questions:[
+      {q:'Which keyword defines a function in Python?',opts:['func','def','function','lambda'],ans:1,exp:'`def` introduces a function definition in Python.'},
+      {q:'What is the output of: print(type([]))?',opts:["<class 'list'>","<class 'dict'>","<class 'tuple'>","<class 'set'>"],ans:0,exp:'[] creates a list, so its type is list.'},
+      {q:'Which operator is used for exponentiation?',opts:['^','**','//','%'],ans:1,exp:'** raises a number to a power; ^ is bitwise XOR.'},
+      {q:'How do you start a single-line comment?',opts:['//','/* */','#','--'],ans:2,exp:'Python uses # for single-line comments.'},
+    ]
+  },
+  approvals:[
+    {id:'o1',student:'Kasun Perera',grade:'10',module:'Python Programming Fundamentals',amount:1500,ip:'112.134.x.x'},
+    {id:'o2',student:'Nethmi Silva',grade:'11',module:'Computer Networks & the Internet',amount:1800,ip:'175.157.x.x'},
+    {id:'o3',student:'Dilan Fernando',grade:'9',module:'Database Concepts with SQL',amount:1600,ip:'124.43.x.x',flag:'Grade mismatch'},
+  ],
+  users:[
+    {name:'Kasun Perera',email:'kasun@example.lk',grade:'10',role:'Student',status:'Active'},
+    {name:'Nethmi Silva',email:'nethmi@example.lk',grade:'11',role:'Student',status:'Active'},
+    {name:'Amaya Jay',email:'amaya@example.lk',grade:'10',role:'Student',status:'Locked'},
+    {name:'Minuri Alaharuwan',email:'minuri@ictacademy.lk',grade:'—',role:'Teacher',status:'Active'},
+  ],
+  aiSources:[
+    {name:'Grade 10 ICT Textbook.pdf',pages:212,status:'Indexed'},
+    {name:'Grade 11 ICT Textbook.pdf',pages:248,status:'Indexed'},
+    {name:'Teacher Guide 2024.pdf',pages:96,status:'Indexed'},
+    {name:'Past Paper Answers 2019-2024.pdf',pages:140,status:'Indexed'},
+  ],
+  blog:[
+    {slug:'study-ict-grade10',title:'5 Study Habits That Boost ICT Marks in Grade 10',cat:'Study Tips',read:'4 min',grad:'gc-lav',body:'Consistency beats cramming. Space your revision, practise past-paper MCQs weekly, and teach a concept to a friend to test true understanding. Build small programs instead of only reading code.'},
+    {slug:'networking-basics',title:'Understanding the Internet: A Beginner Guide to Networking',cat:'Networking',read:'6 min',grad:'gc-mint',body:'Packets, IP addresses, routers and DNS work together every time you open a page. This post breaks down what happens between typing a URL and seeing a website.'},
+    {slug:'exam-2026',title:'What to Expect in the 2026 ICT Paper',cat:'Announcements',read:'3 min',grad:'gc-rose',body:'A look at the structure of the upcoming examination, time management strategies, and the topics most worth revising in the final weeks.'},
+  ],
+  notifs:[
+    {t:'Payment approved — Python Fundamentals added to your library',time:'2h ago'},
+    {t:'Live class "Loops & Iteration" starts at 5:00 PM today',time:'5h ago'},
+    {t:'You earned the Digital Literacy badge 🏅',time:'1d ago'},
+  ],
+};
+
+const state = {view:'home', role:null, user:null, authMethod:'student',
+  quizAnswers:{}, quizSubmitted:false, chat:[
+    {role:'a',text:'Hi! I\'m your ICT tutor. Ask me anything from your Grade 10–11 syllabus. I only answer from official textbooks and guides.',cite:null}
+  ], notifOpen:false};
+
+const app = document.getElementById('app');
+const $ = (s,el=document)=>el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function go(view){state.view=view;state.notifOpen=false;window.scrollTo(0,0);render();}
+function setMethod(m){state.authMethod=m;render();}
+
+/* ---------- shared chrome ---------- */
+function nav(){
+  const items=['home','about','contact','blog'];
+  const labels={home:'Home',about:'About Us',contact:'Contact',blog:'Blog'};
+  return `<nav class="nav">
+    <div class="brand" onclick="go('home')" style="cursor:pointer"><span class="dot"></span>ICT Academy</div>
+    <div class="nav-links">
+      ${items.map(i=>`<a class="${state.view===i?'active':''}" onclick="go('${i}')">${labels[i]}</a>`).join('')}
+      <a class="${state.view==='lms'||state.view==='login'?'active':''}" onclick="go('lms')">LMS</a>
+    </div>
+    <button class="btn btn-primary nav-cta" onclick="go('lms')">Enter LMS →</button>
+    <button class="menu-btn" onclick="go('lms')">☰</button>
+  </nav>`;
+}
+function footer(){
+  return `<footer class="footer wrap"><div class="glass card-pad" style="padding:34px">
+    <div class="footer-grid">
+      <div>
+        <div class="brand mb16"><span class="dot"></span>ICT Academy</div>
+        <p class="muted" style="font-size:14px;max-width:300px">Curriculum-aligned ICT education for Grade 10–11 students in Sri Lanka. Secure, affordable, PDPA-compliant.</p>
+      </div>
+      <div><b style="font-size:13px">Platform</b>
+        <a onclick="go('lms')">Enter LMS</a><a onclick="go('home')">Modules</a><a onclick="go('home')">Live Classes</a></div>
+      <div><b style="font-size:13px">Company</b>
+        <a onclick="go('about')">About Us</a><a onclick="go('blog')">Blog</a><a onclick="go('contact')">Contact</a></div>
+      <div><b style="font-size:13px">Legal</b>
+        <a>PDPA & Privacy</a><a>Parental Consent</a><a>Terms</a></div>
+    </div>
+    <p class="muted tiny mt24" style="border-top:1px solid rgba(120,130,170,.15);padding-top:18px">© 2026 ICT Academy · Built by Minuri Alaharuwan · Liquid Glass theme</p>
+  </div></footer>`;
+}
+
+/* ---------- PUBLIC PAGES ---------- */
+function home(){
+  return `${nav()}<div class="wrap">
+    <section class="hero">
+      <div class="fade-up">
+        <span class="eyebrow">ICT Academy · Grade 10–11</span>
+        <h1 class="mt8">Master ICT.<br>Learn the Apple way — calm, clear, beautiful.</h1>
+        <p class="lead">Recorded modules, live classes, smart quizzes and an AI tutor restricted to your official syllabus. Built for Sri Lankan students, secured for minors.</p>
+        <div class="hero-search">
+          <span>🔍</span><input placeholder="Search a module e.g. Python, Networking…"/>
+          <button class="btn btn-primary btn-sm" onclick="go('lms')">Find</button>
+        </div>
+        <div class="cta-row">
+          <button class="btn btn-primary" onclick="go('lms')">Start Learning</button>
+          <button class="btn btn-peach" onclick="go('about')">How it works</button>
+          <button class="btn btn-glass" onclick="go('blog')">Read the blog</button>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><b>1,000+</b><span>Students</span></div>
+          <div class="stat"><b>6</b><span>Core modules</span></div>
+          <div class="stat"><b>PDPA</b><span>Compliant</span></div>
+        </div>
+      </div>
+      <div class="hero-art fade-up"></div>
+    </section>
+
+    <section class="section-sm">
+      <div class="center mb24"><span class="eyebrow">How it works</span><h2 class="mt8">Three steps to results</h2></div>
+      <div class="grid g3">
+        <div class="glass feat fade-up"><div class="ico gc-lav">📚</div><h3>Buy a module</h3><p>Browse the catalog, purchase per-module or subscribe for live classes. Access unlocks after admin approval.</p>
+          <div class="row between mt16"><span class="tiny muted">Auto-approval</span><div class="toggle on"></div></div></div>
+        <div class="glass feat fade-up"><div class="ico gc-mint">🎥</div><h3>Watch & attend</h3><p>Stream protected recordings with view limits, join live sessions, and track every minute of progress.</p>
+          <div class="row between mt16"><span class="tiny muted">Anti-piracy DRM</span><div class="toggle on"></div></div></div>
+        <div class="glass feat fade-up"><div class="ico gc-rose">🤖</div><h3>Quiz & ask AI</h3><p>Take auto-graded quizzes from past papers and ask the AI tutor — answered only from official sources, with citations.</p>
+          <div class="row between mt16"><span class="tiny muted">Source-restricted</span><div class="toggle on"></div></div></div>
+      </div>
+    </section>
+
+    <section class="section-sm">
+      <div class="row between mb24"><div><span class="eyebrow">Catalog</span><h2 class="mt8">Featured modules</h2></div>
+        <button class="btn btn-glass" onclick="go('lms')">View all →</button></div>
+      <div class="grid g3">
+        ${DB.modules.slice(0,3).map(m=>moduleCard(m)).join('')}
+      </div>
+    </section>
+
+    <section class="section-sm">
+      <div class="glass card-pad fade-up" style="padding:46px;text-align:center;background:var(--glass-strong)">
+        <span style="font-size:40px">"</span>
+        <p class="quote" style="max-width:640px;margin:0 auto">The recordings and AI tutor made revision so much easier. I finally understand subnetting — and my mock marks jumped.</p>
+        <div class="row mt24" style="justify-content:center;gap:12px"><div class="avatar">N</div><div style="text-align:left"><b>Nethmi S.</b><div class="tiny muted">Grade 11 student</div></div></div>
+      </div>
+    </section>
+
+    <section class="section-sm">
+      <div class="glass card-pad fade-up" style="padding:46px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;background:var(--grad-hero)">
+        <div><h2 style="color:#fff">Ready to start?</h2><p style="color:rgba(255,255,255,.85);max-width:380px">Create your account, get parental consent, and enter the classroom in minutes.</p></div>
+        <button class="btn" style="background:#fff;color:var(--blue-d)" onclick="go('lms')">Enter the LMS →</button>
+      </div>
+    </section>
+  </div>${footer()}`;
+}
+
+function moduleCard(m,action='Enter LMS'){
+  return `<div class="glass card-pad fade-up">
+    <div class="thumb ${m.grad}"></div>
+    <div class="row wrap-flex mb8" style="gap:6px"><span class="chip chip-blue">Grade ${m.grade}</span><span class="chip">${m.subj}</span></div>
+    <h3 style="font-size:17px;margin-bottom:6px">${esc(m.title)}</h3>
+    <p class="tiny muted mb16">${m.dur} · ${m.inst}</p>
+    <div class="row between"><span class="price">Rs ${m.price.toLocaleString()}</span>
+      <button class="btn btn-primary btn-sm" onclick="go('lms')">${action}</button></div>
+  </div>`;
+}
+
+function about(){
+  return `${nav()}<div class="wrap">
+    <section class="section">
+      <div class="center" style="max-width:640px;margin:0 auto">
+        <span class="eyebrow">About Us</span>
+        <h1 class="mt8" style="font-size:clamp(34px,4.5vw,52px)">Education that respects students, parents and data.</h1>
+        <p class="lead muted" style="margin:20px auto">ICT Academy is an independent online academy delivering structured, exam-aligned ICT teaching to Grade 10–11 students across Sri Lanka.</p>
+      </div>
+      <div class="grid g3 mt24">
+        <div class="glass feat"><div class="ico gc-lav">🎯</div><h3>Our mission</h3><p>Make high-quality ICT education affordable and accessible while keeping minors safe online.</p></div>
+        <div class="glass feat"><div class="ico gc-mint">🧑‍🏫</div><h3>One dedicated teacher</h3><p>Every live class is taught by Minuri Alaharuwan, with consistent pedagogy and personal attention.</p></div>
+        <div class="glass feat"><div class="ico gc-rose">🔒</div><h3>PDPA by design</h3><p>Parental consent, data minimisation and anonymised analytics are built into every flow.</p></div>
+      </div>
+      <div class="glass card-pad mt24" style="padding:38px;display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center">
+        <div class="avatar" style="width:96px;height:96px;font-size:32px;border-radius:28px">M</div>
+        <div><span class="eyebrow">The instructor</span><h2 class="mt8" style="font-size:26px">Minuri Alaharuwan</h2>
+          <p class="muted mt8">Founder and lead instructor of ICT Academy. Designs the curriculum, streams every live class, and oversees the platform that keeps content protected and learning measurable.</p>
+          <div class="row mt16 wrap-flex" style="gap:8px"><span class="chip chip-blue">Programming</span><span class="chip chip-mint">Networking</span><span class="chip chip-rose">Databases</span><span class="chip chip-peach">Web</span></div>
+        </div>
+      </div>
+      <div class="glass card-pad mt24" style="padding:34px;background:var(--grad-mint)">
+        <h3 style="color:#0c4a40">Child-safety commitment</h3>
+        <p style="color:#0c4a40;opacity:.85;max-width:680px;margin-top:8px">We never collect more data than necessary, we require verified parental consent for every minor at registration, and all reporting is anonymised. Single-device login and DRM protect both students and content.</p>
+      </div>
+    </section>
+  </div>${footer()}`;
+}
+
+function contact(){
+  return `${nav()}<div class="wrap">
+    <section class="section">
+      <div class="center mb24"><span class="eyebrow">Contact</span><h1 class="mt8" style="font-size:clamp(34px,4.5vw,50px)">Talk to us</h1></div>
+      <div class="grid g2">
+        <div class="glass card-pad" style="padding:34px">
+          <h3 class="mb16">Send a message</h3>
+          <div class="field"><label>Full name</label><input class="input" placeholder="Your name"/></div>
+          <div class="field"><label>Email</label><input class="input" placeholder="you@example.lk"/></div>
+          <div class="field"><label>Message</label><textarea placeholder="How can we help?"></textarea></div>
+          <button class="btn btn-primary btn-block" onclick="toast('Message sent! We\\'ll reply within 24h.')">Send message</button>
+        </div>
+        <div>
+          <div class="glass card-pad mb16" style="padding:28px"><h3 class="mb16">Reach us directly</h3>
+            <div class="row mb16" style="gap:14px"><div class="ico gc-blue" style="width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:18px">✉️</div><div><b>Email</b><div class="tiny muted">hello@ictacademy.lk</div></div></div>
+            <div class="row mb16" style="gap:14px"><div class="ico gc-mint" style="width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:18px">💬</div><div><b>WhatsApp</b><div class="tiny muted">+94 7X XXX XXXX</div></div></div>
+            <div class="row" style="gap:14px"><div class="ico gc-rose" style="width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:18px">🕐</div><div><b>Support hours</b><div class="tiny muted">Mon–Sat · 9 AM – 7 PM</div></div></div>
+          </div>
+          <div class="glass card-pad" style="padding:28px;background:var(--grad-lav)">
+            <h3 style="color:#fff">For parents</h3>
+            <p style="color:rgba(255,255,255,.88);margin-top:8px">Questions about consent, safety or your child's progress? We're happy to walk you through how the platform protects minors.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>${footer()}`;
+}
+
+function blog(){
+  return `${nav()}<div class="wrap">
+    <section class="section">
+      <div class="center mb24"><span class="eyebrow">Blog</span><h1 class="mt8" style="font-size:clamp(34px,4.5vw,50px)">ICT learning, exam tips & news</h1></div>
+      <div class="grid g3">
+        ${DB.blog.map(b=>`<div class="glass card-pad fade-up">
+          <div class="thumb ${b.grad}"></div>
+          <span class="chip chip-rose mb8">${b.cat}</span>
+          <h3 style="font-size:18px;margin:8px 0">${esc(b.title)}</h3>
+          <p class="tiny muted mb16">${b.read} read</p>
+          <button class="btn btn-glass btn-sm" onclick="toast('Article opens in the full app.')">Read article →</button>
+        </div>`).join('')}
+      </div>
+    </section>
+  </div>${footer()}`;
+}
+
+/* ---------- LMS GATEWAY + LOGIN ---------- */
+function lmsGateway(){
+  const isStudent = state.authMethod==='student';
+  return `${nav()}<div class="auth-wrap"><div class="glass auth-card fade-up">
+    <div class="center mb24"><div class="brand" style="justify-content:center"><span class="dot"></span>ICT Academy LMS</div>
+      <p class="muted tiny mt8">Choose how you want to sign in</p></div>
+    <div class="auth-tabs">
+      <button class="${isStudent?'active':''}" onclick="setMethod('student')">
+        <span class="t">🎓 Student</span><span class="s">Connect to your class</span></button>
+      <button class="peach ${!isStudent?'active':''}" onclick="setMethod('staff')">
+        <span class="t">🛠️ Admin / Teacher</span><span class="s">Manage the LMS & website</span></button>
+    </div>
+    ${isStudent ? studentLoginForm() : staffLoginForm()}
+    <p class="center tiny muted mt16">Prototype demo — credentials are pre-filled. Just press the button.</p>
+  </div></div>`;
+}
+function studentLoginForm(){
+  return `<div class="field"><label>Email or phone</label><input class="input" id="li-email" value="kasun@example.lk"/></div>
+    <div class="field"><label>Password</label><input class="input" type="password" id="li-pass" value="Demo@1234"/></div>
+    <div class="row between mb16"><label class="row" style="gap:8px;font-size:13px;cursor:pointer"><div class="toggle" id="mfa-tog" onclick="this.classList.toggle('on')"></div> Use MFA (TOTP)</label>
+      <a class="tiny" style="color:var(--blue-d);cursor:pointer" onclick="toast('OTP sent to your registered number.')">Forgot password?</a></div>
+    <button class="btn btn-primary btn-block" onclick="login('student')">🎓 Connect to Class</button>
+    <p class="center tiny muted mt16">New here? <a style="color:var(--blue-d);cursor:pointer" onclick="toast('Registration: name, email, grade, password + parental consent + OTP.')">Register with parental consent</a></p>`;
+}
+function staffLoginForm(){
+  return `<div class="field"><label>Staff email</label><input class="input" id="li-email" value="minuri@ictacademy.lk"/></div>
+    <div class="field"><label>Password</label><input class="input" type="password" id="li-pass" value="Admin@1234"/></div>
+    <div class="field"><label>Sign in as</label>
+      <select id="li-role"><option value="admin">Admin — full management</option><option value="teacher">Teacher — classes & quizzes</option></select></div>
+    <button class="btn btn-peach btn-block" onclick="login('staff')">🛠️ Manage LMS</button>`;
+}
+function login(method){
+  if(method==='student'){state.role='student';state.user={name:'Kasun Perera',grade:'10'};go('app:library');}
+  else{const r=$('#li-role')?.value||'admin';state.role=r;state.user={name:r==='admin'?'Minuri (Admin)':'Minuri (Teacher)'};go(r==='admin'?'adm:approvals':'tch:stream');}
+}
+function logout(){state.role=null;state.user=null;go('home');}
+
+/* ---------- LMS SHELL ---------- */
+function shell(navItems,active,title,content){
+  const initial=(state.user?.name||'U')[0];
+  return `<nav class="nav"><div class="brand" onclick="go('home')" style="cursor:pointer"><span class="dot"></span>ICT Academy</div>
+    <div class="nav-links"><a onclick="go('home')">← Public site</a></div>
+    <button class="btn btn-glass nav-cta" onclick="logout()">Log out</button></nav>
+  <div class="lms-shell">
+    <aside class="glass side">
+      <div class="side-brand"><span class="dot" style="width:22px;height:22px"></span>${state.role==='student'?'My Classroom':state.role==='admin'?'Admin Console':'Teacher Console'}</div>
+      <div class="side-nav">
+        ${navItems.map(n=>`<a class="${active===n.k?'active':''}" onclick="go('${n.k}')"><span class="ico">${n.i}</span>${n.l}</a>`).join('')}
+      </div>
+    </aside>
+    <main>
+      <div class="glass topbar">
+        <h2>${title}</h2>
+        <div style="margin-left:auto;position:relative">
+          <div class="bell" onclick="toggleNotif()">🔔<span class="badge">${DB.notifs.length}</span>
+            ${state.notifOpen?`<div class="glass pop" onclick="event.stopPropagation()"><b class="tiny" style="text-transform:uppercase;letter-spacing:.06em;color:var(--ink-500)">Notifications</b>
+              ${DB.notifs.map(n=>`<div class="ni">${esc(n.t)}<div class="tiny muted mt8">${n.time}</div></div>`).join('')}</div>`:''}
+          </div>
+        </div>
+        <div class="row" style="gap:10px"><div class="avatar">${initial}</div><div><b style="font-size:14px">${esc(state.user?.name||'')}</b><div class="tiny muted">${state.role}${state.user?.grade?' · Grade '+state.user.grade:''}</div></div></div>
+      </div>
+      ${content}
+    </main>
+  </div>`;
+}
+function toggleNotif(){state.notifOpen=!state.notifOpen;render();}
+
+/* student nav */
+const SNAV=[{k:'app:library',i:'📚',l:'My Library'},{k:'app:catalog',i:'🛍️',l:'Catalog'},{k:'app:live',i:'🎥',l:'Live Classes'},
+  {k:'app:quiz',i:'📝',l:'Quizzes'},{k:'app:progress',i:'📊',l:'Progress'},{k:'app:ai',i:'🤖',l:'AI Tutor'}];
+/* admin nav */
+const ANAV=[{k:'adm:approvals',i:'✅',l:'Approvals'},{k:'adm:content',i:'🎬',l:'Content'},{k:'adm:limits',i:'🔢',l:'View Limits'},
+  {k:'adm:users',i:'👥',l:'Users'},{k:'adm:ai',i:'🧠',l:'AI Sources'},{k:'adm:reports',i:'📈',l:'Reports'},{k:'adm:cms',i:'✍️',l:'Website / Blog'}];
+/* teacher nav */
+const TNAV=[{k:'tch:stream',i:'🎥',l:'Live Streaming'},{k:'tch:quiz',i:'📝',l:'Quiz Builder'},{k:'tch:reports',i:'📈',l:'Reports'}];
+
+/* ---------- STUDENT VIEWS ---------- */
+function vLibrary(){
+  const cards=DB.library.map(g=>{
+    const m=DB.modules.find(x=>x.id===g.id);
+    const left=g.viewLimit-g.viewCount;
+    return `<div class="glass card-pad fade-up">
+      <div class="thumb ${m.grad}"></div>
+      <div class="row between mb8"><span class="chip chip-blue">Grade ${m.grade}</span>
+        <span class="chip ${left<=2?'chip-warn':'chip-mint'}">${left} views left</span></div>
+      <h3 style="font-size:17px;margin-bottom:10px">${esc(m.title)}</h3>
+      <div class="pbar mb8"><i style="width:${g.progress}%"></i></div>
+      <div class="row between mb16"><span class="tiny muted">${g.progress}% complete</span><span class="tiny muted">${g.viewCount}/${g.viewLimit} views</span></div>
+      <button class="btn btn-primary btn-block btn-sm" onclick="go('app:watch:${g.id}')">${g.progress===100?'Rewatch':'Continue'} ▶</button>
+    </div>`;
+  }).join('');
+  return shell(SNAV,'app:library','My Library',`<div class="grid g3">${cards}</div>
+    <div class="glass card-pad mt24" style="padding:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+      <div><h3>Want more modules?</h3><p class="muted tiny">Browse the full catalog and unlock new topics.</p></div>
+      <button class="btn btn-peach" onclick="go('app:catalog')">Open catalog →</button></div>`);
+}
+
+function vWatch(id){
+  const g=DB.library.find(x=>x.id===id),m=DB.modules.find(x=>x.id===id);
+  const left=g.viewLimit-g.viewCount;
+  const content=`<div class="grid" style="grid-template-columns:1.6fr 1fr;gap:22px">
+    <div>
+      <div class="player">
+        <span class="vc"><span class="chip" style="background:rgba(0,0,0,.4);color:#fff;border:none">👁 ${left} views left</span></span>
+        <span class="wm">ICT ACADEMY · ${esc(state.user.name)}</span>
+        <div class="center-ico" onclick="playSim('${id}')">▶</div>
+        <div class="ctrls"><button onclick="playSim('${id}')">▶</button><div class="pbar"><i style="width:${g.progress}%"></i></div><span class="tiny" style="color:#fff">${g.progress}%</span><button>⛶</button></div>
+      </div>
+      <h2 class="mt16">${esc(m.title)}</h2>
+      <div class="row wrap-flex mt8" style="gap:8px"><span class="chip chip-blue">Grade ${m.grade}</span><span class="chip">${m.subj}</span><span class="chip">${m.dur}</span></div>
+      <p class="muted mt16">Protected stream — downloads, screenshots and screen recording are blocked. Your view count increases only after watching past 50% of the lesson.</p>
+    </div>
+    <div class="glass card-pad" style="padding:22px;height:fit-content">
+      <h3 class="mb16">Lesson sections</h3>
+      ${['Introduction','Core concepts','Worked example','Practice','Summary'].map((s,i)=>`<div class="row between" style="padding:10px 0;border-bottom:1px solid rgba(120,130,170,.12)">
+        <span style="font-size:14px">${i< Math.round(g.progress/20)?'✅':'▷'} ${s}</span><span class="tiny muted">${5+i*4}m</span></div>`).join('')}
+      <button class="btn btn-glass btn-block mt16" onclick="go('app:quiz')">Take the quiz →</button>
+    </div>
+  </div>`;
+  return shell(SNAV,'app:library',`Watching · ${esc(m.title)}`,content);
+}
+function playSim(id){
+  const g=DB.library.find(x=>x.id===id);
+  if(g.viewCount>=g.viewLimit){toast('View limit reached — repurchase to continue.');return;}
+  g.viewCount++; if(g.progress<100)g.progress=Math.min(100,g.progress+18);
+  toast('▶ Streaming… view counted (past 50%). Progress synced.');
+  render();
+}
+
+function vCatalog(){
+  return shell(SNAV,'app:catalog','Module Catalog',
+    `<div class="row wrap-flex mb24" style="gap:8px"><span class="chip chip-blue">All</span><span class="chip">Grade 10</span><span class="chip">Grade 11</span><span class="chip">Programming</span><span class="chip">Networking</span></div>
+    <div class="grid g3">${DB.modules.map(m=>{
+      const owned=DB.library.some(x=>x.id===m.id);
+      return `<div class="glass card-pad fade-up"><div class="thumb ${m.grad}"></div>
+        <div class="row wrap-flex mb8" style="gap:6px"><span class="chip chip-blue">Grade ${m.grade}</span><span class="chip">${m.subj}</span></div>
+        <h3 style="font-size:16px;margin-bottom:6px">${esc(m.title)}</h3><p class="tiny muted mb16">${m.dur}</p>
+        <div class="row between"><span class="price">Rs ${m.price.toLocaleString()}</span>
+        ${owned?`<span class="chip chip-mint">In library</span>`:`<button class="btn btn-primary btn-sm" onclick="buy('${m.id}')">Buy</button>`}</div></div>`;
+    }).join('')}</div>`);
+}
+function buy(id){toast('Payment received. Access is held pending admin approval (eligibility check). You\'ll be notified.');}
+
+function vLive(){
+  return shell(SNAV,'app:live','Live Classes',
+    `<div class="grid g2">${DB.live.map(l=>`<div class="glass card-pad fade-up" style="padding:24px">
+      <div class="row between mb16"><span class="chip chip-rose">● LIVE soon</span><span class="chip chip-blue">Grade ${l.grade}</span></div>
+      <h3 style="font-size:18px;margin-bottom:8px">${esc(l.topic)}</h3>
+      <p class="muted tiny mb16">🕐 ${l.when} · taught by Minuri A.</p>
+      <div class="row between"><span class="tiny muted">Chat · Polls · Q&A · Screen share</span>
+      <button class="btn btn-primary btn-sm" onclick="toast('Verifying subscription & single-device rule… joining secure room.')">Join →</button></div>
+    </div>`).join('')}</div>
+    <div class="glass card-pad mt24" style="padding:24px;background:var(--grad-mint)"><h3 style="color:#0c4a40">Subscription active</h3>
+    <p style="color:#0c4a40;opacity:.85;margin-top:6px">Your monthly live-class subscription is approved. Sessions are auto-recorded and added to your library after the teacher uploads them.</p></div>`);
+}
+
+function vQuiz(){
+  const q=DB.quiz, sub=state.quizSubmitted;
+  let score=0; if(sub){q.questions.forEach((qq,i)=>{if(state.quizAnswers[i]===qq.ans)score++;});}
+  const body=`<div class="glass card-pad" style="padding:30px;max-width:760px">
+    <div class="row between mb24"><div><span class="eyebrow">Module: Python Fundamentals</span><h2 class="mt8">${q.title}</h2></div>
+      <span class="chip chip-warn">⏱ ${sub?'Submitted':q.timer}</span></div>
+    ${q.questions.map((qq,i)=>`<div class="mb24"><b style="font-size:15px">${i+1}. ${esc(qq.q)}</b>
+      <div class="mt16">${qq.opts.map((o,j)=>{
+        let cls='q-opt'; const chosen=state.quizAnswers[i]===j;
+        if(sub){if(j===qq.ans)cls+=' correct';else if(chosen)cls+=' wrong';}
+        else if(chosen)cls+=' sel';
+        return `<div class="${cls}" ${sub?'':`onclick="pickAns(${i},${j})"`}>${esc(o)}</div>`;
+      }).join('')}</div>
+      ${sub?`<p class="tiny" style="color:var(--ink-500);margin-top:6px">💡 ${esc(qq.exp)}</p>`:''}</div>`).join('')}
+    ${sub?`<div class="glass card-pad" style="padding:24px;background:${score>=3?'var(--grad-mint)':'var(--grad-rose)'};text-align:center">
+        <h2 style="color:#1c1c2b">You scored ${score}/${q.questions.length}</h2>
+        <p style="margin-top:6px">${score>=3?'Great work! Progress updated and a badge is on its way. 🏅':'Keep going — review the explanations and re-watch the module.'}</p>
+        <button class="btn btn-glass mt16" onclick="resetQuiz()">Retake quiz (attempt 2/3)</button></div>`
+      :`<button class="btn btn-primary btn-block" onclick="submitQuiz()">Submit quiz (auto-grade)</button>`}
+  </div>`;
+  return shell(SNAV,'app:quiz','Quizzes',body);
+}
+function pickAns(i,j){state.quizAnswers[i]=j;render();}
+function submitQuiz(){
+  if(Object.keys(state.quizAnswers).length<DB.quiz.questions.length){toast('Answer all questions first.');return;}
+  state.quizSubmitted=true;render();
+}
+function resetQuiz(){state.quizAnswers={};state.quizSubmitted=false;render();}
+
+function vProgress(){
+  const rows=DB.library.map(g=>{const m=DB.modules.find(x=>x.id===g.id);
+    return `<div class="mb24"><div class="row between mb8"><b style="font-size:14px">${esc(m.title)}</b><span class="tiny muted">${g.progress}%</span></div>
+      <div class="pbar"><i style="width:${g.progress}%"></i></div></div>`;}).join('');
+  const overall=Math.round(DB.library.reduce((a,g)=>a+g.progress,0)/DB.library.length);
+  return shell(SNAV,'app:progress','My Progress',
+    `<div class="grid g4 mb24">
+      ${stat('Overall',overall+'%','gc-blue')}${stat('Modules',DB.library.length,'gc-lav')}
+      ${stat('Badges','2','gc-rose')}${stat('Time spent','11h','gc-mint')}</div>
+    <div class="grid g2">
+      <div class="glass card-pad" style="padding:28px"><h3 class="mb24">Module completion</h3>${rows}
+        <button class="btn btn-glass btn-block" onclick="toast('Progress report exported as PDF.')">Export report (PDF)</button></div>
+      <div class="glass card-pad" style="padding:28px"><h3 class="mb24">Milestones</h3>
+        <div class="grid g2" style="gap:20px">
+          <div class="center"><div class="medal gc-mint">🏅</div><b class="tiny mt8" style="display:block">Digital Literacy</b><span class="tiny muted">100% complete</span></div>
+          <div class="center"><div class="medal gc-rose">🎯</div><b class="tiny mt8" style="display:block">First Quiz Passed</b><span class="tiny muted">Score 4/4</span></div>
+          <div class="center" style="opacity:.4"><div class="medal" style="background:#c4c8d8">🔒</div><b class="tiny mt8" style="display:block">Module Master</b><span class="tiny muted">Finish 3 modules</span></div>
+          <div class="center" style="opacity:.4"><div class="medal" style="background:#c4c8d8">🔥</div><b class="tiny mt8" style="display:block">7-day Streak</b><span class="tiny muted">Keep learning</span></div>
+        </div></div>
+    </div>`);
+}
+function stat(l,v,g){return `<div class="glass card-pad center" style="padding:22px"><div class="ico ${g}" style="margin:0 auto 12px">★</div><div style="font-family:'Bricolage Grotesque';font-size:28px;color:var(--ink-900)">${v}</div><div class="tiny muted">${l}</div></div>`;}
+
+function vAI(){
+  const msgs=state.chat.map(m=>`<div class="msg ${m.role}">${esc(m.text)}${m.cite?`<div class="cite">📑 ${esc(m.cite)}</div>`:''}</div>`).join('');
+  return shell(SNAV,'app:ai','AI Tutor',
+    `<div class="glass card-pad" style="padding:24px;max-width:760px">
+      <div class="row between mb16"><div class="row" style="gap:10px"><div class="ico gc-blue" style="width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#fff">🤖</div><div><b>ICT Tutor</b><div class="tiny muted">Source-restricted · cites textbooks</div></div></div>
+        <span class="chip chip-mint">7/10 queries today</span></div>
+      <div class="chat" id="chatbox">${msgs}</div>
+      <div class="row mt16" style="gap:10px"><input class="input" id="ai-q" placeholder="e.g. Explain binary search" onkeydown="if(event.key==='Enter')askAI()"/>
+        <button class="btn btn-primary" onclick="askAI()">Ask</button></div>
+      <div class="row wrap-flex mt16" style="gap:8px">
+        ${['What is an IP address?','Explain binary search','What is a primary key?','Difference: RAM vs ROM'].map(s=>`<span class="chip" style="cursor:pointer" onclick="quickAsk('${s}')">${s}</span>`).join('')}</div>
+    </div>`);
+}
+function quickAsk(s){$('#ai-q').value=s;askAI();}
+function askAI(){
+  const inp=$('#ai-q'); const q=inp.value.trim(); if(!q)return;
+  state.chat.push({role:'u',text:q});
+  const a=aiAnswer(q);
+  state.chat.push({role:'a',text:a.text,cite:a.cite});
+  render();
+  setTimeout(()=>{const cb=$('#chatbox'); if(cb)cb.scrollTop=cb.scrollHeight;},50);
+}
+function aiAnswer(q){
+  const s=q.toLowerCase();
+  if(s.includes('binary search'))return{text:'Binary search finds an item in a sorted list by repeatedly halving the search range. Compare the target with the middle element; if smaller, search the left half, if larger, the right half. It runs in O(log n) time.',cite:'Grade 11 ICT Textbook, p.132'};
+  if(s.includes('ip address'))return{text:'An IP address is a unique numeric label assigned to each device on a network. IPv4 uses four numbers (0–255) separated by dots, e.g. 192.168.1.1. It identifies both the network and the host.',cite:'Grade 11 ICT Textbook, p.78'};
+  if(s.includes('primary key'))return{text:'A primary key is a column (or set of columns) that uniquely identifies each row in a database table. It cannot be NULL and must be unique across all rows.',cite:'Grade 11 ICT Textbook, p.156'};
+  if(s.includes('ram')&&s.includes('rom'))return{text:'RAM is volatile, fast, read/write memory used while a program runs — it loses data when power is off. ROM is non-volatile and stores permanent firmware like the boot instructions.',cite:'Grade 10 ICT Textbook, p.41'};
+  if(s.includes('loop')||s.includes('iteration'))return{text:'A loop repeats a block of code. Python has `for` loops (iterate over a sequence) and `while` loops (repeat while a condition is true). Use loops to avoid writing the same code many times.',cite:'Grade 10 ICT Textbook, p.95'};
+  return{text:'That looks like an ICT question — in the full system I retrieve the exact passage from the indexed textbooks and answer with a citation. Try one of the suggested questions to see a cited answer. (I stay strictly within the Grade 10–11 syllabus.)',cite:'Teacher Guide 2024, p.12'};
+}
+
+/* ---------- ADMIN VIEWS ---------- */
+function vApprovals(){
+  const cards=DB.approvals.map(a=>`<div class="glass card-pad fade-up" style="padding:22px" id="ap-${a.id}">
+    <div class="row between mb8"><b>${esc(a.student)}</b>${a.flag?`<span class="chip chip-rose">⚠ ${a.flag}</span>`:`<span class="chip chip-mint">Eligible</span>`}</div>
+    <p class="tiny muted">Grade ${a.grade} · ${esc(a.module)}</p>
+    <p class="tiny muted mb16">Rs ${a.amount.toLocaleString()} · IP ${a.ip}</p>
+    <div class="row" style="gap:8px"><button class="btn btn-ok btn-sm" onclick="decide('${a.id}',1)">Approve</button>
+      <button class="btn btn-danger btn-sm" onclick="decide('${a.id}',0)">Deny</button></div></div>`).join('');
+  return shell(ANAV,'adm:approvals','Pending Payment Approvals',
+    DB.approvals.length?`<div class="grid g3">${cards}</div>`:`<div class="glass card-pad center" style="padding:60px"><h3>🎉 All caught up</h3><p class="muted mt8">No pending approvals. New purchases will appear here.</p></div>`);
+}
+function decide(id,ok){
+  DB.approvals=DB.approvals.filter(a=>a.id!==id);
+  toast(ok?'Approved — access granted & student notified.':'Denied — refund initiated & student notified.');
+  render();
+}
+
+function vContent(){
+  return shell(ANAV,'adm:content','Content Management',
+    `<div class="glass card-pad mb24" style="padding:28px;border:2px dashed rgba(120,130,170,.3);text-align:center">
+      <div style="font-size:34px">🎬</div><h3 class="mt8">Upload a recording</h3><p class="muted tiny mb16">MP4 · transcoded to encrypted HLS · stored privately</p>
+      <button class="btn btn-primary" onclick="toast('Upload accepted — transcoding to HLS renditions.')">Choose file</button></div>
+    <div class="glass card-pad" style="padding:24px"><h3 class="mb16">Published modules</h3>
+      <table class="tbl"><tr><th>Module</th><th>Grade</th><th>Subject</th><th>Price</th><th>Status</th></tr>
+      ${DB.modules.map(m=>`<tr><td>${esc(m.title)}</td><td>Grade ${m.grade}</td><td>${m.subj}</td><td>Rs ${m.price.toLocaleString()}</td><td><span class="chip chip-mint">Published</span></td></tr>`).join('')}
+      </table></div>`);
+}
+
+function vLimits(){
+  return shell(ANAV,'adm:limits','View-Limit Configuration',
+    `<div class="glass card-pad" style="padding:24px"><h3 class="mb8">Recording view limits</h3>
+      <p class="muted tiny mb24">Default max 8 views per recording. Set globally or per recording.</p>
+      <table class="tbl"><tr><th>Module</th><th>Scope</th><th>Max views</th><th></th></tr>
+      ${DB.modules.slice(0,4).map((m,i)=>`<tr><td>${esc(m.title)}</td><td><span class="chip">Global</span></td>
+        <td><div class="row" style="gap:8px"><button class="btn btn-glass btn-sm" onclick="toast('Limit decreased.')">−</button><b id="lim-${i}">8</b><button class="btn btn-glass btn-sm" onclick="toast('Limit increased.')">+</button></div></td>
+        <td><button class="btn btn-primary btn-sm" onclick="toast('Limit saved & affected students notified.')">Save</button></td></tr>`).join('')}
+      </table></div>`);
+}
+
+function vUsers(){
+  return shell(ANAV,'adm:users','User Management',
+    `<div class="glass card-pad" style="padding:24px"><div class="row between mb16"><h3>All users (${DB.users.length})</h3><input class="input" style="max-width:240px" placeholder="Search users…"/></div>
+      <table class="tbl"><tr><th>Name</th><th>Email</th><th>Grade</th><th>Role</th><th>Status</th><th></th></tr>
+      ${DB.users.map(u=>`<tr><td><b>${esc(u.name)}</b></td><td class="tiny">${esc(u.email)}</td><td>${u.grade}</td>
+        <td><span class="chip ${u.role==='Teacher'?'chip-peach':'chip-blue'}">${u.role}</span></td>
+        <td><span class="chip ${u.status==='Active'?'chip-mint':'chip-warn'}">${u.status}</span></td>
+        <td><button class="btn btn-glass btn-sm" onclick="toast('${u.status==='Locked'?'Account unlocked.':'Password reset link sent.'}')">${u.status==='Locked'?'Unlock':'Reset'}</button></td></tr>`).join('')}
+      </table></div>`);
+}
+
+function vAISrc(){
+  return shell(ANAV,'adm:ai','AI Source Management',
+    `<div class="glass card-pad mb24" style="padding:24px;background:var(--grad-lav)"><h3 style="color:#fff">RAG knowledge base</h3>
+      <p style="color:rgba(255,255,255,.85);margin-top:6px">The AI tutor answers only from these indexed sources (FAISS vector store). No external data — every answer is cited.</p></div>
+    <div class="glass card-pad" style="padding:24px"><div class="row between mb16"><h3>Indexed documents</h3>
+      <button class="btn btn-primary btn-sm" onclick="toast('Source uploaded — chunking & embedding into FAISS.')">+ Add source</button></div>
+      <table class="tbl"><tr><th>Document</th><th>Pages</th><th>Status</th></tr>
+      ${DB.aiSources.map(s=>`<tr><td>📄 ${esc(s.name)}</td><td>${s.pages}</td><td><span class="chip chip-mint">${s.status}</span></td></tr>`).join('')}
+      </table></div>`);
+}
+
+let charts=[];
+function vReports(){
+  const body=`<div class="grid g4 mb24">
+    ${stat('Avg score','78%','gc-blue')}${stat('Completion','64%','gc-mint')}${stat('Attendance','82%','gc-lav')}${stat('Pass rate','71%','gc-rose')}</div>
+    <div class="grid g2">
+      <div class="glass card-pad" style="padding:24px"><h3 class="mb16">Average quiz score by module</h3><canvas id="ch1" height="160"></canvas></div>
+      <div class="glass card-pad" style="padding:24px"><h3 class="mb16">Completion rate over time</h3><canvas id="ch2" height="160"></canvas></div>
+    </div>
+    <div class="glass card-pad mt24" style="padding:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+      <p class="muted tiny">All metrics anonymised (no PII) for PDPA compliance.</p>
+      <div class="row" style="gap:8px"><button class="btn btn-glass btn-sm" onclick="toast('Report exported as PDF.')">Export PDF</button>
+      <button class="btn btn-glass btn-sm" onclick="toast('Report exported as CSV.')">Export CSV</button>
+      <button class="btn btn-primary btn-sm" onclick="toast('Weekly report scheduled by email.')">Schedule email</button></div></div>`;
+  setTimeout(drawCharts,60);
+  return shell(ANAV,'adm:reports','Reports & Analytics',body);
+}
+function drawCharts(){
+  charts.forEach(c=>c.destroy()); charts=[];
+  const c1=$('#ch1'),c2=$('#ch2'); if(!c1)return;
+  Chart.defaults.font.family="'Plus Jakarta Sans'";Chart.defaults.color='#6b6b80';
+  charts.push(new Chart(c1,{type:'bar',data:{labels:['Python','Networks','SQL','Literacy','Web','Logic'],
+    datasets:[{data:[82,74,68,88,71,79],backgroundColor:['#8b9af0','#7dd3c0','#f4a6c0','#f5c98a','#4f7cff','#a8c4f5'],borderRadius:10}]},
+    options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,grid:{color:'rgba(120,130,170,.12)'}},x:{grid:{display:false}}}}}));
+  charts.push(new Chart(c2,{type:'line',data:{labels:['W1','W2','W3','W4','W5','W6'],
+    datasets:[{data:[20,34,45,52,60,64],borderColor:'#4f7cff',backgroundColor:'rgba(79,124,255,.12)',fill:true,tension:.4,pointRadius:4,pointBackgroundColor:'#4f7cff'}]},
+    options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,grid:{color:'rgba(120,130,170,.12)'}},x:{grid:{display:false}}}}}));
+}
+
+function vCMS(){
+  return shell(ANAV,'adm:cms','Website / Blog CMS',
+    `<div class="grid g2">
+      <div class="glass card-pad" style="padding:24px"><h3 class="mb16">Write a blog post</h3>
+        <div class="field"><label>Title</label><input class="input" id="cms-title" placeholder="Post title"/></div>
+        <div class="field"><label>Category</label><select id="cms-cat"><option>Study Tips</option><option>Networking</option><option>Announcements</option></select></div>
+        <div class="field"><label>Body</label><textarea id="cms-body" placeholder="Write your article…"></textarea></div>
+        <button class="btn btn-primary btn-block" onclick="publishPost()">Publish to public website</button></div>
+      <div class="glass card-pad" style="padding:24px"><h3 class="mb16">Published posts (${DB.blog.length})</h3>
+        ${DB.blog.map(b=>`<div class="row between" style="padding:12px 0;border-bottom:1px solid rgba(120,130,170,.12)">
+          <div><b style="font-size:14px">${esc(b.title)}</b><div class="tiny muted">${b.cat} · ${b.read}</div></div>
+          <span class="chip chip-mint">Live</span></div>`).join('')}
+        <p class="muted tiny mt16">Posts appear instantly on the public Blog page.</p></div>
+    </div>`);
+}
+function publishPost(){
+  const t=$('#cms-title').value.trim(),c=$('#cms-cat').value,b=$('#cms-body').value.trim();
+  if(!t){toast('Add a title first.');return;}
+  const grads=['gc-lav','gc-mint','gc-rose','gc-peach','gc-blue'];
+  DB.blog.unshift({slug:t.toLowerCase().replace(/\s+/g,'-'),title:t,cat:c,read:'3 min',grad:grads[DB.blog.length%5],body:b||'…'});
+  toast('Published! It\'s now live on the public Blog page.');
+  render();
+}
+
+/* ---------- TEACHER VIEWS ---------- */
+let streaming=false;
+function vStream(){
+  return shell(TNAV,'tch:stream','Live Streaming Console',
+    `<div class="grid" style="grid-template-columns:1.6fr 1fr;gap:22px">
+      <div><div class="player">
+        <span class="vc"><span class="chip" style="background:${streaming?'rgba(226,96,122,.9)':'rgba(0,0,0,.4)'};color:#fff;border:none">${streaming?'● LIVE':'○ Offline'}</span></span>
+        <div class="center-ico">🎥</div></div>
+        <div class="row mt16" style="gap:10px">
+          <button class="btn ${streaming?'btn-danger':'btn-primary'}" onclick="toggleStream()">${streaming?'Stop stream':'Start stream'}</button>
+          <button class="btn btn-glass" onclick="toast('Screen sharing enabled.')">Share screen</button>
+          <button class="btn btn-glass" onclick="toast('Poll launched to students.')">Launch poll</button></div>
+        <p class="muted tiny mt16">${streaming?'Recording is on. The session will auto-upload for admin approval when you stop.':'Select a scheduled session and start streaming. Only subscribed, approved students can join.'}</p></div>
+      <div class="glass card-pad" style="padding:22px;height:fit-content"><h3 class="mb16">Scheduled today</h3>
+        ${DB.live.map(l=>`<div style="padding:12px 0;border-bottom:1px solid rgba(120,130,170,.12)"><b style="font-size:14px">${esc(l.topic)}</b><div class="tiny muted mt8">${l.when} · Grade ${l.grade}</div></div>`).join('')}
+        <div class="row between mt16"><span class="tiny muted">Attendance tracking</span><div class="toggle on"></div></div></div>
+    </div>`);
+}
+function toggleStream(){streaming=!streaming;toast(streaming?'You are now LIVE — students admitted, attendance tracking on.':'Stream stopped — recording uploaded for admin approval.');render();}
+
+function vTQuiz(){
+  return shell(TNAV,'tch:quiz','Quiz Builder',
+    `<div class="grid g2">
+      <div class="glass card-pad" style="padding:24px"><h3 class="mb16">Create a quiz</h3>
+        <div class="field"><label>Quiz title</label><input class="input" placeholder="e.g. Networking Unit Test"/></div>
+        <div class="field"><label>Linked module</label><select>${DB.modules.map(m=>`<option>${esc(m.title)}</option>`).join('')}</select></div>
+        <div class="row" style="gap:12px"><div class="field" style="flex:1"><label>Timer (min)</label><input class="input" value="20"/></div>
+          <div class="field" style="flex:1"><label>Retake limit</label><input class="input" value="3"/></div></div>
+        <div class="row between mb16"><span class="tiny muted">Randomise questions</span><div class="toggle on"></div></div>
+        <button class="btn btn-primary btn-block" onclick="toast('Quiz created & published to students.')">Create quiz</button></div>
+      <div class="glass card-pad" style="padding:24px"><h3 class="mb16">Import from past papers</h3>
+        <div class="glass card-pad" style="padding:30px;border:2px dashed rgba(120,130,170,.3);text-align:center">
+          <div style="font-size:30px">📄</div><p class="muted tiny mt8 mb16">Upload a CSV of MCQs (question, options, answer, explanation)</p>
+          <button class="btn btn-peach" onclick="toast('CSV imported — 20 questions added to the bank.')">Upload CSV</button></div>
+        <p class="muted tiny mt16">Imported questions become a randomised bank with auto-grading and instant feedback.</p></div>
+    </div>`);
+}
+function vTReports(){
+  const body=`<div class="grid g4 mb24">${stat('Avg score','78%','gc-blue')}${stat('Completion','64%','gc-mint')}${stat('Attendance','82%','gc-lav')}${stat('Pass rate','71%','gc-rose')}</div>
+  <div class="grid g2"><div class="glass card-pad" style="padding:24px"><h3 class="mb16">Average quiz score by module</h3><canvas id="ch1" height="160"></canvas></div>
+  <div class="glass card-pad" style="padding:24px"><h3 class="mb16">Completion over time</h3><canvas id="ch2" height="160"></canvas></div></div>`;
+  setTimeout(drawCharts,60);
+  return shell(TNAV,'tch:reports','Class Reports',body);
+}
+
+/* ---------- toast ---------- */
+function toast(msg){
+  let t=document.createElement('div');
+  t.textContent=msg;
+  t.style.cssText="position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:999;background:rgba(28,28,43,.92);color:#fff;padding:13px 22px;border-radius:999px;font-size:14px;font-weight:600;box-shadow:0 12px 30px rgba(0,0,0,.3);max-width:90vw;text-align:center";
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.transition='opacity .4s';t.style.opacity='0';setTimeout(()=>t.remove(),400);},2600);
+}
+
+/* ---------- router ---------- */
+function render(){
+  const v=state.view;
+  let html;
+  if(v==='home')html=home();
+  else if(v==='about')html=about();
+  else if(v==='contact')html=contact();
+  else if(v==='blog')html=blog();
+  else if(v==='lms'||v==='login')html=lmsGateway();
+  else if(v==='app:library')html=vLibrary();
+  else if(v.startsWith('app:watch:'))html=vWatch(v.split(':')[2]);
+  else if(v==='app:catalog')html=vCatalog();
+  else if(v==='app:live')html=vLive();
+  else if(v==='app:quiz')html=vQuiz();
+  else if(v==='app:progress')html=vProgress();
+  else if(v==='app:ai')html=vAI();
+  else if(v==='adm:approvals')html=vApprovals();
+  else if(v==='adm:content')html=vContent();
+  else if(v==='adm:limits')html=vLimits();
+  else if(v==='adm:users')html=vUsers();
+  else if(v==='adm:ai')html=vAISrc();
+  else if(v==='adm:reports')html=vReports();
+  else if(v==='adm:cms')html=vCMS();
+  else if(v==='tch:stream')html=vStream();
+  else if(v==='tch:quiz')html=vTQuiz();
+  else if(v==='tch:reports')html=vTReports();
+  else html=home();
+  app.innerHTML=html;
+}
+render();
+document.addEventListener('click',e=>{if(state.notifOpen && !e.target.closest('.bell')){state.notifOpen=false;render();}});
+</script>
+</body>
+</html>

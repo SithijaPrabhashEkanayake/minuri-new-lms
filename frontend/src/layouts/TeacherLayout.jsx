@@ -1,0 +1,51 @@
+import React from 'react';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+export function TeacherLayout() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  return (
+    <div className="lms-shell" style={{ position: 'relative', zIndex: 1 }}>
+      <aside className="glass side">
+        <div className="side-brand">
+          <span className="dot" style={{ width: '22px', height: '22px', borderRadius: '7px', background: 'linear-gradient(135deg,#f8d49a,#f5c98a)', boxShadow: '0 4px 10px rgba(200,160,80,.4)' }}></span>
+          Teacher
+        </div>
+        <nav className="side-nav">
+          <NavLink to="/teach/stream" className={({ isActive }) => isActive ? 'active' : ''}>
+            <span className="ico">🎥</span> Live Stream
+          </NavLink>
+          <NavLink to="/teach/quizzes" className={({ isActive }) => isActive ? 'active' : ''}>
+            <span className="ico">📝</span> Quiz Builder
+          </NavLink>
+          <NavLink to="/teach/reports" className={({ isActive }) => isActive ? 'active' : ''}>
+            <span className="ico">📊</span> Reports
+          </NavLink>
+        </nav>
+        <div style={{ marginTop: 'auto', paddingTop: '16px', borderTop: '1px solid rgba(120,130,170,.12)' }}>
+          <a style={{ cursor: 'pointer' }} onClick={handleLogout}>
+            <span className="ico">🚪</span> Log out
+          </a>
+        </div>
+      </aside>
+
+      <div>
+        <div className="topbar glass" style={{ borderRadius: 'var(--r-card)', padding: '14px 20px' }}>
+          <h2 style={{ flex: 1 }}>Teacher</h2>
+          <div className="avatar" style={{ background: 'linear-gradient(135deg,#f8d49a,#f5c98a)' }}>{user?.name?.charAt(0) || 'T'}</div>
+          <span style={{ fontWeight: 600, fontSize: '14px' }}>{user?.name || 'Teacher'}</span>
+        </div>
+        <main style={{ marginTop: '20px' }}>
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
+}
