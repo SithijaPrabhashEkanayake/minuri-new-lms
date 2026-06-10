@@ -5,11 +5,20 @@ const { prisma } = require('../config/db');
 // @access  Protected (Student)
 const createEnrollment = async (req, res) => {
   try {
-    const { moduleId, paymentRef, classType, grade, medium, institution } = req.body;
+    const { moduleId, paymentRef } = req.body;
     const studentId = req.user.id;
 
     if (!moduleId) {
       return res.status(400).json({ message: 'Module ID is required' });
+    }
+
+    const student = await prisma.user.findUnique({
+      where: { id: studentId },
+      select: { grade: true, classType: true, medium: true, institution: true }
+    });
+
+    if (!student) {
+      return res.status(404).json({ message: 'Student profile not found' });
     }
 
     let receiptUrl = null;
@@ -37,10 +46,10 @@ const createEnrollment = async (req, res) => {
         moduleId,
         paymentRef,
         receiptUrl,
-        classType,
-        grade: grade ? parseInt(grade) : null,
-        medium,
-        institution,
+        classType: student.classType,
+        grade: student.grade,
+        medium: student.medium,
+        institution: student.institution,
         status: 'pending',
         ipAddress: req.ip
       }
@@ -60,7 +69,7 @@ const getPendingEnrollments = async (req, res) => {
     const enrollments = await prisma.enrollment.findMany({
       where: { status: 'pending' },
       include: {
-        student: { select: { name: true, email: true } },
+        student: { select: { name: true, email: true, grade: true, classType: true, medium: true, institution: true } },
         module: { select: { title: true, price: true } }
       },
       orderBy: { createdAt: 'asc' }

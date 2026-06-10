@@ -4,8 +4,8 @@ import { useAuth } from '../../context/AuthContext';
 export function Content() {
   const { user } = useAuth();
   const [title, setTitle] = useState('');
-  const [selectedGrade, setSelectedGrade] = useState('All');
-  const [moduleSearchText, setModuleSearchText] = useState('');
+  const [selectedGrade, setSelectedGrade] = useState('11');
+  const [selectedClassType, setSelectedClassType] = useState('Theory');
   const [thumbnail, setThumbnail] = useState(null);
   const [video, setVideo] = useState(null);
   const [modules, setModules] = useState([]);
@@ -27,68 +27,7 @@ export function Content() {
       .catch(err => console.error('Error fetching modules:', err));
   }, []);
 
-  // Filter modules based on selected grade
-  const filteredModules = selectedGrade === 'All' 
-    ? modules 
-    : modules.filter(m => m.grade.toString() === selectedGrade);
 
-  // When grade filter changes, reset the search text to the first available in the filtered list
-  useEffect(() => {
-    if (filteredModules.length > 0) {
-      if (!filteredModules.find(m => m.title === moduleSearchText)) {
-        setModuleSearchText(filteredModules[0].title);
-      }
-    } else {
-      setModuleSearchText('');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedGrade, modules]);
-
-  const handleCreateModuleOnly = async () => {
-    if (!user?.token) {
-      alert('You must be logged in to create a module.');
-      return;
-    }
-    if (!moduleSearchText.trim()) {
-      alert('Please type a module name first.');
-      return;
-    }
-    
-    const searchTarget = moduleSearchText.toLowerCase().trim();
-    if (modules.find(m => m.title.toLowerCase().trim() === searchTarget)) {
-      alert('This module already exists!');
-      return;
-    }
-
-    const gradeToUse = selectedGrade === 'All' ? 10 : parseInt(selectedGrade);
-    
-    try {
-      const createRes = await fetch('http://localhost:5000/api/modules', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`
-        },
-        body: JSON.stringify({
-          title: moduleSearchText.trim(),
-          grade: gradeToUse,
-          price: 5000,
-          subject: 'ICT',
-          published: true
-        })
-      });
-      
-      if (!createRes.ok) throw new Error('Failed to create new module');
-      const selectedModule = await createRes.json();
-      
-      // Add to local state so the table updates immediately
-      setModules([...modules, { ...selectedModule, videos: [] }]);
-      alert(`Module "${selectedModule.title}" created successfully!`);
-    } catch (err) {
-      console.error(err);
-      alert('Failed to create the new module.');
-    }
-  };
 
   const handleUpload = async (e) => {
     e.preventDefault();
@@ -97,52 +36,20 @@ export function Content() {
       alert('You must be logged in to upload content.');
       return;
     }
-    if (!title || !thumbnail || !video || !moduleSearchText) {
-      alert('Please fill in all fields (Title, Module, Reference Image, and Video).');
+    if (!title || !thumbnail || !video) {
+      alert('Please fill in all fields (Title, Reference Image, and Video).');
       return;
     }
 
-    // Search across ALL modules, ignoring case and trailing spaces
-    const searchTarget = moduleSearchText.toLowerCase().trim();
-    let selectedModule = modules.find(m => m.title.toLowerCase().trim() === searchTarget);
-
-    let moduleIdToUpload;
+    const targetModuleTitle = `GRADE ${selectedGrade} ${selectedClassType.toUpperCase()}`;
+    const selectedModule = modules.find(m => m.title.toUpperCase() === targetModuleTitle);
 
     if (!selectedModule) {
-      const confirmCreate = window.confirm(`The module "${moduleSearchText.trim()}" does not exist. Would you like to create it automatically?`);
-      if (!confirmCreate) return;
-      
-      const gradeToUse = selectedGrade === 'All' ? 10 : parseInt(selectedGrade);
-      
-      try {
-        const createRes = await fetch('http://localhost:5000/api/modules', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user.token}`
-          },
-          body: JSON.stringify({
-            title: moduleSearchText.trim(),
-            grade: gradeToUse,
-            price: 5000,
-            subject: 'ICT',
-            published: true
-          })
-        });
-        
-        if (!createRes.ok) throw new Error('Failed to create new module');
-        selectedModule = await createRes.json();
-        
-        // Add to local state so the table updates immediately
-        setModules([...modules, { ...selectedModule, videos: [] }]);
-      } catch (err) {
-        console.error(err);
-        alert('Failed to create the new module automatically.');
-        return;
-      }
+      alert(`Error: The catalog "${targetModuleTitle}" does not exist in the system. Please ensure the catalogs have been correctly set up.`);
+      return;
     }
 
-    moduleIdToUpload = selectedModule.id;
+    let moduleIdToUpload = selectedModule.id;
 
     setIsUploading(true);
     setUploadProgress(0);
@@ -222,8 +129,8 @@ export function Content() {
     }
   };
 
-  // Hardcode the grades to show only All, 10, and 11
-  const uniqueGrades = ['All', '10', '11'];
+  // Hardcode the grades to show only 10 and 11
+  const uniqueGrades = ['10', '11'];
 
   return (
     <div>
@@ -256,31 +163,21 @@ export function Content() {
                 onChange={e => setSelectedGrade(e.target.value)}
               >
                 {uniqueGrades.map(grade => (
-                  <option key={grade} value={grade}>{grade === 'All' ? 'All Grades' : `Grade ${grade}`}</option>
+                  <option key={grade} value={grade}>Grade {grade}</option>
                 ))}
               </select>
             </div>
             
             <div className="field">
-              <label>Assign to Module</label>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <input 
-                  className="input"
-                  list="modules-list"
-                  value={moduleSearchText}
-                  onChange={e => setModuleSearchText(e.target.value)}
-                  placeholder="Type module name..."
-                  style={{ flex: 1 }}
-                />
-                <button type="button" className="btn btn-secondary" onClick={handleCreateModuleOnly}>
-                  + Create
-                </button>
-              </div>
-              <datalist id="modules-list">
-                {filteredModules.map(m => (
-                  <option key={m.id} value={m.title} />
-                ))}
-              </datalist>
+              <label>Select Class Type</label>
+              <select 
+                className="input"
+                value={selectedClassType}
+                onChange={e => setSelectedClassType(e.target.value)}
+              >
+                <option value="Theory">Theory Class</option>
+                <option value="Paper Class">Paper Class</option>
+              </select>
             </div>
           </div>
 

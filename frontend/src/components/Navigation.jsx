@@ -5,7 +5,7 @@ export function Navigation() {
   return (
     <nav className="nav">
       <Link to="/" className="brand" style={{ cursor: 'pointer', textDecoration: 'none' }}>
-        <span className="dot"></span>ICT Academy
+        <span className="dot"></span>ICT WITH MINU
       </Link>
       <div className="nav-links">
         <NavLink to="/" end className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink>

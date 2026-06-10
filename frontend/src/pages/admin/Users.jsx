@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 
 export function Users() {
   const { user } = useAuth();
@@ -79,7 +80,7 @@ export function Users() {
     (u.email && u.email.toLowerCase().includes(search.toLowerCase()))
   );
 
-  if (loading) return <div className="p24 center">Loading users...</div>;
+  if (loading) return <LoadingSpinner text="Loading users..." />;
 
   return (
     <div className="glass card-pad" style={{ padding: '24px' }}>

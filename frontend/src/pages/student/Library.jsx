@@ -3,6 +3,7 @@ import { GlassCard } from '../../components/ui/GlassCard';
 import { Button } from '../../components/ui/Button';
 import { VdoPlayer } from '../../components/VdoPlayer';
 import { useAuth } from '../../context/AuthContext';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 
 export function Library() {
   const { user, logout } = useAuth();
@@ -76,7 +77,7 @@ export function Library() {
     );
   }
 
-  if (loading) return <div className="p24 center">Loading library...</div>;
+  if (loading) return <LoadingSpinner text="Loading library..." />;
   if (error) return <div className="p24 center text-danger">{error}</div>;
 
   return (

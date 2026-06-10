@@ -31,6 +31,42 @@ async function main() {
   // the Supabase auth.users table. Use the frontend Gateway
   // registration form to create new users.
 
+  // Create dummy instructor for modules
+  let instructor = await prisma.user.findFirst({ where: { roleId: teacherRole.id } });
+  if (!instructor) {
+    instructor = await prisma.user.create({
+      data: {
+        id: 'system-instructor-uuid-0001',
+        name: 'System Instructor',
+        email: 'instructor@system.local',
+        password: 'NO_LOGIN',
+        phoneHash: 'none',
+        roleId: teacherRole.id,
+        consentGiven: true
+      }
+    });
+  }
+
+  console.log('Wiping existing enrollments and modules...');
+  await prisma.videoView.deleteMany({});
+  await prisma.video.deleteMany({});
+  await prisma.question.deleteMany({});
+  await prisma.quiz.deleteMany({});
+  await prisma.enrollment.deleteMany({});
+  await prisma.module.deleteMany({});
+
+  console.log('Creating the 4 required catalogs...');
+  const catalogs = [
+    { title: 'GRADE 11 THEORY', grade: 11, price: 2500, published: true, instructorId: instructor.id },
+    { title: 'GRADE 11 PAPER CLASS', grade: 11, price: 2000, published: true, instructorId: instructor.id },
+    { title: 'GRADE 10 THEORY', grade: 10, price: 2500, published: true, instructorId: instructor.id },
+    { title: 'GRADE 10 PAPER CLASS', grade: 10, price: 2000, published: true, instructorId: instructor.id }
+  ];
+
+  for (const c of catalogs) {
+    await prisma.module.create({ data: c });
+  }
+
   console.log('Seeding complete. Register users via the frontend registration form.');
 }
 

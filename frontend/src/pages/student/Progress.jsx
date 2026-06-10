@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 
 export function Progress() {
   const { user } = useAuth();
@@ -36,7 +37,7 @@ export function Progress() {
     </div>
   );
 
-  if (loading) return <div className="p30">Loading progress...</div>;
+  if (loading) return <LoadingSpinner text="Loading progress..." />;
   if (!data) return <div className="p30">Failed to load progress.</div>;
 
   return (

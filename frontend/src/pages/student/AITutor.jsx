@@ -57,7 +57,7 @@ export function AITutor() {
     <div className="glass card-pad" style={{ padding: '24px', maxWidth: '760px' }}>
       <div className="row between mb16">
         <div className="row" style={{ gap: '10px' }}>
-          <div className="ico gc-blue" style={{ width: '38px', height: '38px', borderRadius: '12px', display: 'grid', placeItems: 'center', color: '#fff' }}>🤖</div>
+          <div className="ico gc-blue" style={{ width: '38px', height: '38px', borderRadius: '12px', display: 'grid', placeItems: 'center', color: '#fff' }}><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Smileys/Robot.webp" alt="Robot" width="25" height="25" /></div>
           <div>
             <b>ICT Tutor</b>
             <div className="tiny muted">Source-restricted · cites textbooks</div>

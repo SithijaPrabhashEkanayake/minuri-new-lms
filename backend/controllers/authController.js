@@ -46,6 +46,9 @@ const completeProfile = async (req, res) => {
         password: 'MANAGED_BY_SUPABASE',
         phoneHash,
         grade,
+        classType,
+        medium,
+        institution,
         roleId: studentRole.id,
         consentGiven: true,
         consentTs: new Date()

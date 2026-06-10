@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GlassCard } from '../../components/ui/GlassCard';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 
 export function Catalog() {
   const { user } = useAuth();
@@ -13,8 +14,7 @@ export function Catalog() {
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
-          // Optionally filter by grade if desired, or show all
-          setModules(data.filter(m => m.grade === user?.grade || !user?.grade));
+          setModules(data);
         }
         setLoading(false);
       })
@@ -26,17 +26,13 @@ export function Catalog() {
 
   const [selectedModule, setSelectedModule] = useState(null);
   const [enrollForm, setEnrollForm] = useState({
-    classType: 'Theory',
-    grade: '11',
-    medium: 'Physical',
-    institution: 'Ziplin',
     paymentRef: ''
   });
   const [receiptFile, setReceiptFile] = useState(null);
 
   const handleEnrollClick = (mod) => {
     setSelectedModule(mod);
-    setEnrollForm({ ...enrollForm, grade: mod.grade.toString() });
+    setEnrollForm({ paymentRef: '' });
   };
 
   const submitEnrollment = async () => {
@@ -47,10 +43,6 @@ export function Catalog() {
     const formData = new FormData();
     formData.append('moduleId', selectedModule.id);
     formData.append('paymentRef', enrollForm.paymentRef);
-    formData.append('classType', enrollForm.classType);
-    formData.append('grade', enrollForm.grade);
-    formData.append('medium', enrollForm.medium);
-    formData.append('institution', enrollForm.institution);
     formData.append('receipt', receiptFile);
 
     try {
@@ -76,7 +68,7 @@ export function Catalog() {
     }
   };
 
-  if (loading) return <div className="p24 center">Loading catalog...</div>;
+  if (loading) return <LoadingSpinner text="Loading catalog..." />;
 
   return (
     <div>
@@ -115,41 +107,6 @@ export function Catalog() {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <GlassCard style={{ width: '400px', maxWidth: '90%', padding: '24px', maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 style={{ marginBottom: '16px' }}>Enroll in {selectedModule.title}</h3>
-            
-            <div className="field">
-              <label>Class Type</label>
-              <select className="input" value={enrollForm.classType} onChange={e => setEnrollForm({...enrollForm, classType: e.target.value})}>
-                <option value="Theory">Theory Class</option>
-                <option value="Paper">Paper Class</option>
-                <option value="Both">Both (Theory & Paper)</option>
-              </select>
-            </div>
-
-            <div className="grid g2" style={{ gap: '16px' }}>
-              <div className="field">
-                <label>Grade</label>
-                <select className="input" value={enrollForm.grade} onChange={e => setEnrollForm({...enrollForm, grade: e.target.value})}>
-                  <option value="10">Grade 10</option>
-                  <option value="11">Grade 11</option>
-                </select>
-              </div>
-              <div className="field">
-                <label>Medium</label>
-                <select className="input" value={enrollForm.medium} onChange={e => setEnrollForm({...enrollForm, medium: e.target.value})}>
-                  <option value="Physical">Physical Class</option>
-                  <option value="Online">Online Class</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="field">
-              <label>Institution</label>
-              <select className="input" value={enrollForm.institution} onChange={e => setEnrollForm({...enrollForm, institution: e.target.value})}>
-                <option value="Ziplin">Ziplin</option>
-                <option value="Suzipka">Suzipka</option>
-                <option value="Zipzone">Zipzone</option>
-              </select>
-            </div>
 
             <div className="field">
               <label>Payment Reference (Optional)</label>

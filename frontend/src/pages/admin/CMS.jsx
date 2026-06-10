@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 
 export function CMS() {
   const { user } = useAuth();
@@ -104,7 +105,7 @@ export function CMS() {
     setBody('');
   };
 
-  if (loading) return <div className="p24 center">Loading blogs...</div>;
+  if (loading) return <LoadingSpinner text="Loading blogs..." />;
 
   return (
     <div className="grid g2">

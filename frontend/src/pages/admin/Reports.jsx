@@ -13,6 +13,8 @@ import {
   Filler
 } from 'chart.js';
 import { useAuth } from '../../context/AuthContext';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+
 
 ChartJS.register(
   CategoryScale,
@@ -103,7 +105,7 @@ export function Reports() {
     </div>
   );
 
-  if (loading) return <div className="p24 center">Loading analytics...</div>;
+  if (loading) return <LoadingSpinner text="Loading analytics..." />;
   if (!data) return <div className="p24 center">Failed to load analytics.</div>;
 
   const barData = {

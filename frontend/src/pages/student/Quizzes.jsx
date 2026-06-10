@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 
 export function Quizzes() {
   const { user } = useAuth();
@@ -67,7 +68,7 @@ export function Quizzes() {
     setSubmitted(false);
   };
 
-  if (loading) return <div style={{ padding: '30px' }}>Loading quizzes...</div>;
+  if (loading) return <LoadingSpinner text="Loading quizzes..." />;
 
   if (!selectedQuiz) {
     return (

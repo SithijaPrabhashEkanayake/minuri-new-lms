@@ -20,30 +20,30 @@ export function AdminLayout() {
         </div>
         <nav className="side-nav">
           <NavLink to="/admin/approvals" className={({ isActive }) => isActive ? 'active' : ''}>
-            <span className="ico">✅</span> Approvals
+            <span className="ico"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Symbols/Check%20Mark%20Button.webp" alt="Check Mark Button" width="40" height="40" /></span> Approvals
           </NavLink>
           <NavLink to="/admin/content" className={({ isActive }) => isActive ? 'active' : ''}>
-            <span className="ico">🎬</span> Content
+            <span className="ico"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Clapper%20Board.webp" alt="Clapper Board" width="40" height="40" /></span> Content
           </NavLink>
           <NavLink to="/admin/limits" className={({ isActive }) => isActive ? 'active' : ''}>
-            <span className="ico">🔒</span> View Limits
+            <span className="ico"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Locked%20With%20Key.webp" alt="Locked With Key" width="40" height="40" /></span> View Limits
           </NavLink>
           <NavLink to="/admin/users" className={({ isActive }) => isActive ? 'active' : ''}>
-            <span className="ico">👥</span> Users
+            <span className="ico"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/People/Busts%20In%20Silhouette.webp" alt="Busts In Silhouette" width="40" height="40" /></span> Users
           </NavLink>
           <NavLink to="/admin/ai" className={({ isActive }) => isActive ? 'active' : ''}>
-            <span className="ico">🤖</span> AI Sources
+            <span className="ico"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Smileys/Robot.webp" alt="Robot" width="40" height="40" /></span> AI Sources
           </NavLink>
           <NavLink to="/admin/reports" className={({ isActive }) => isActive ? 'active' : ''}>
-            <span className="ico">📊</span> Reports
+            <span className="ico"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Bar%20Chart.webp" alt="Bar Chart" width="40" height="40" /></span> Reports
           </NavLink>
           <NavLink to="/admin/cms" className={({ isActive }) => isActive ? 'active' : ''}>
-            <span className="ico">✍️</span> Blog CMS
+            <span className="ico"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/People/Writing%20Hand.webp" alt="Writing Hand" width="40" height="40" /></span> Blog CMS
           </NavLink>
         </nav>
         <div style={{ marginTop: 'auto', paddingTop: '16px', borderTop: '1px solid rgba(120,130,170,.12)' }}>
-          <a style={{ cursor: 'pointer' }} onClick={handleLogout}>
-            <span className="ico">🚪</span> Log out
+          <a className="logout-btn" onClick={handleLogout}>
+            <span className="ico"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/People/Backhand%20Index%20Pointing%20Left.webp" alt="Backhand Index Pointing Left" width="40" height="40" /></span> Log out
           </a>
         </div>
       </aside>

@@ -2,6 +2,40 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DB } from '../data/mockDB';
 import { FeatureCarousel } from '../components/FeatureCarousel';
+import { InteractiveAccordion } from '../components/ui/InteractiveAccordion';
+
+const newFeatureItems = [
+  {
+    id: 1,
+    title: 'The "All-in-One" Student Dashboard1',
+    description: 'Experience a premium, app like interface! Browse courses, watch videos, join live classes, and chat with AI without ever leaving the platform..',
+    imageUrl: '/images/1.png'
+  },
+  {
+    id: 2,
+    title: 'Embedded Live Classrooms',
+    description: 'No need to download Zoom! Join high quality, interactive live classes directly from your dashboard with one click..',
+    imageUrl: '/images/2.png'
+  },
+  {
+    id: 3,
+    title: 'High Security Video Player',
+    description: 'Watch lessons safely. Our advanced system blocks video downloads, screen recordings, and account sharing to protect the content.',
+    imageUrl: '/images/3.png'
+  },
+  {
+    id: 4,
+    title: 'The "Minu AI" Syllabus Tutor',
+    description: 'Stuck on a past paper at 2 AM? Get instant, accurate answers from our AI tutor, strictly trained on the Grade 10 & 11 ICT syllabus.e.',
+    imageUrl: '/images/4.png'
+  },
+  {
+    id: 5,
+    title: 'Easy Enrollment',
+    description: 'Simply choose your class, upload your bank deposit slip, and get instant access to your lessons as soon as the admin approves!.',
+    imageUrl: '/images/5.png'
+  }
+];
 
 export function Home() {
   const navigate = useNavigate();
@@ -14,8 +48,8 @@ export function Home() {
       return;
     }
     const q = query.toLowerCase();
-    const results = DB.modules.filter(m => 
-      m.title.toLowerCase().includes(q) || 
+    const results = DB.modules.filter(m =>
+      m.title.toLowerCase().includes(q) ||
       m.subj.toLowerCase().includes(q)
     );
     setSearchResults(results);
@@ -42,7 +76,7 @@ export function Home() {
     <div className="wrap">
       <section className="hero">
         <div className="fade-up">
-          <span className="eyebrow">ICT Academy · Grade 10–11</span>
+          <span className="eyebrow">ICT WITH MINU · Grade 10–11</span>
           <h1 className="mt8">Master ICT.<br />Learn the Apple way  calm, clear, beautiful.</h1>
           <p className="lead">Recorded modules, live classes, smart quizzes and an AI tutor restricted to your official syllabus. Built for Sri Lankan students, secured for minors.</p>
           <div className="cta-row" style={{ marginTop: '32px' }}>
@@ -55,8 +89,8 @@ export function Home() {
             <div className="stat"><b>PDPA</b><span>Compliant</span></div>
           </div>
         </div>
-        <div className="hero-art fade-up">
-          <img src="/images/instructor.jpg" alt="Instructor" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
+        <div className="fade-up" style={{ width: '100%', overflow: 'hidden' }}>
+          <InteractiveAccordion />
         </div>
       </section>
 
@@ -84,16 +118,19 @@ export function Home() {
         </div>
       </section>
 
-      <FeatureCarousel 
-        title="Experience the ICT Mela"
-        subtitle="Join Minuri Alaharuwan for an immersive seminar experience. Swipe through some of our best moments from past events."
-        images={[
-          { src: '/images/mela-1.jpg', alt: 'ICT Mela flyer' },
-          { src: '/images/mela-2.jpg', alt: 'Minuri Alaharuwan at seminar' },
-          { src: '/images/mela-3.jpg', alt: 'Seminar crowd' },
-          { src: '/images/mela-4.jpg', alt: 'Speaking on stage' }
-        ]}
-      />
+      <section className="section-sm fade-up" style={{ width: '100%', overflow: 'hidden' }}>
+        <InteractiveAccordion items={newFeatureItems} />
+      </section>
+
+      <section className="section-sm">
+        <div className="center mb24">
+          <h2 className="mt8">Experience the ICT Mela</h2>
+          <p className="lead muted" style={{ maxWidth: '600px', margin: '0 auto' }}>Join Minuri Alaharuwan for an immersive seminar experience.</p>
+        </div>
+        <div className="fade-up" style={{ borderRadius: '16px', overflow: 'hidden', boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}>
+          <img src="/images/mela-banner.png" alt="ICT Mela Banner" style={{ width: '100%', height: 'auto', display: 'block' }} />
+        </div>
+      </section>
 
       <section className="section-sm">
         <div className="glass card-pad fade-up" style={{ padding: '46px', textAlign: 'center', background: 'var(--glass-strong)' }}>

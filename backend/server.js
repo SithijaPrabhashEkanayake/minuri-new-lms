@@ -36,6 +36,7 @@ const quizRoutes = require('./routes/quizRoutes');
 const progressRoutes = require('./routes/progressRoutes');
 const aiTutorRoutes = require('./routes/aiTutorRoutes');
 const enrollmentRoutes = require('./routes/enrollmentRoutes');
+const liveRoutes = require('./routes/liveRoutes');
 
 // Mount routers
 app.use('/api/auth', authRoutes);
@@ -49,6 +50,7 @@ app.use('/api/quizzes', quizRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/ai', aiTutorRoutes);
 app.use('/api/enrollments', enrollmentRoutes);
+app.use('/api/live', liveRoutes);
 
 const PORT = process.env.PORT || 5000;
 

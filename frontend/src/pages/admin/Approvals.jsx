@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 
 export function Approvals() {
   const { user } = useAuth();
@@ -50,7 +51,7 @@ export function Approvals() {
     }
   };
 
-  if (loading) return <div className="p24 center">Loading...</div>;
+  if (loading) return <LoadingSpinner text="Loading..." />;
 
   return (
     <div>
@@ -66,10 +67,10 @@ export function Approvals() {
                 <strong>Module:</strong> {a.module.title} (Rs {a.module.price?.toLocaleString()})
               </p>
               <div style={{ background: 'rgba(0,0,0,0.03)', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' }}>
-                <div><strong>Grade:</strong> {a.grade || a.student.grade}</div>
-                <div><strong>Class:</strong> {a.classType}</div>
-                <div><strong>Medium:</strong> {a.medium}</div>
-                {a.institution && <div><strong>Inst:</strong> {a.institution}</div>}
+                <div><strong>Grade:</strong> {a.grade || a.student?.grade || 'N/A'}</div>
+                <div><strong>Class:</strong> {a.classType || a.student?.classType || 'N/A'}</div>
+                <div><strong>Medium:</strong> {a.medium || a.student?.medium || 'N/A'}</div>
+                {(a.institution || a.student?.institution) && <div><strong>Inst:</strong> {a.institution || a.student?.institution}</div>}
               </div>
               {a.receiptUrl && (
                 <a href={`http://localhost:5000${a.receiptUrl}`} target="_blank" rel="noreferrer" style={{ display: 'block', marginBottom: '16px' }}>
@@ -85,7 +86,7 @@ export function Approvals() {
         </div>
       ) : (
         <div className="glass card-pad center" style={{ padding: '60px' }}>
-          <h3>🎉 All caught up</h3>
+          <h3><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Symbols/Check%20Mark%20Button.webp" alt="Check Mark Button" width="30" height="30" style={{ verticalAlign: 'middle', marginRight: '8px' }} />All caught up</h3>
           <p className="muted mt8">No pending approvals. New requests will appear here.</p>
         </div>
       )}

@@ -15,23 +15,23 @@ export function TeacherLayout() {
     <div className="lms-shell" style={{ position: 'relative', zIndex: 1 }}>
       <aside className="glass side">
         <div className="side-brand">
-          <span className="dot" style={{ width: '22px', height: '22px', borderRadius: '7px', background: 'linear-gradient(135deg,#f8d49a,#f5c98a)', boxShadow: '0 4px 10px rgba(200,160,80,.4)' }}></span>
-          Teacher
+          <span className="dot" style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'linear-gradient(135deg,#f8d49a,#f5c98a)', boxShadow: '0 4px 10px rgba(200,160,80,.4)' }}></span>
+          <span style={{ fontSize: '28px' }}>Teacher</span>
         </div>
         <nav className="side-nav">
           <NavLink to="/teach/stream" className={({ isActive }) => isActive ? 'active' : ''}>
-            <span className="ico">🎥</span> Live Stream
+            <span className="ico"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Television.webp" alt="Television" width="40" height="40" /></span> Live Stream
           </NavLink>
           <NavLink to="/teach/quizzes" className={({ isActive }) => isActive ? 'active' : ''}>
-            <span className="ico">📝</span> Quiz Builder
+            <span className="ico"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Hourglass%20Done.webp" alt="Hourglass Done" width="40" height="40" /></span> Quiz Builder
           </NavLink>
           <NavLink to="/teach/reports" className={({ isActive }) => isActive ? 'active' : ''}>
-            <span className="ico">📊</span> Reports
+            <span className="ico"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Bar%20Chart.webp" alt="Bar Chart" width="40" height="40" /></span> Reports
           </NavLink>
         </nav>
         <div style={{ marginTop: 'auto', paddingTop: '16px', borderTop: '1px solid rgba(120,130,170,.12)' }}>
-          <a style={{ cursor: 'pointer' }} onClick={handleLogout}>
-            <span className="ico">🚪</span> Log out
+          <a className="logout-btn" onClick={handleLogout}>
+            <span className="ico"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/People/Backhand%20Index%20Pointing%20Left.webp" alt="Backhand Index Pointing Left" width="40" height="40" /></span> Log out
           </a>
         </div>
       </aside>

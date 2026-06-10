@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 
 export function Limits() {
   const { user } = useAuth();
@@ -57,7 +58,7 @@ export function Limits() {
     setSaving(null);
   };
 
-  if (loading) return <div className="p24 center">Loading...</div>;
+  if (loading) return <LoadingSpinner text="Loading..." />;
 
   return (
     <div className="glass card-pad" style={{ padding: '24px' }}>
