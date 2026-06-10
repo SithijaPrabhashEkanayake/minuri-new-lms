@@ -18,7 +18,7 @@ export function Content() {
 
   useEffect(() => {
     // Fetch real modules from Postgres
-    fetch('http://localhost:5000/api/modules')
+    fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/modules`)
       .then(res => res.json())
       .then(data => {
         setModules(data);
@@ -56,7 +56,7 @@ export function Content() {
 
     try {
       // 1. Get secure AWS S3 upload credentials from our backend
-      const credResponse = await fetch('http://localhost:5000/api/video/upload-credentials', {
+      const credResponse = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/video/upload-credentials`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ export function Content() {
       });
 
       // 4. Save videoId to Postgres database
-      const saveResponse = await fetch(`http://localhost:5000/api/modules/${moduleIdToUpload}/videos`, {
+      const saveResponse = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/modules/${moduleIdToUpload}/videos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

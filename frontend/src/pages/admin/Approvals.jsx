@@ -13,7 +13,7 @@ export function Approvals() {
 
   const fetchPending = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/enrollments/pending', {
+      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/enrollments/pending`, {
         headers: { 'Authorization': `Bearer ${user?.token}` }
       });
       const data = await res.json();
@@ -29,7 +29,7 @@ export function Approvals() {
 
   const decide = async (id, status) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/enrollments/${id}/status`, {
+      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/enrollments/${id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -73,8 +73,8 @@ export function Approvals() {
                 {(a.institution || a.student?.institution) && <div><strong>Inst:</strong> {a.institution || a.student?.institution}</div>}
               </div>
               {a.receiptUrl && (
-                <a href={`http://localhost:5000${a.receiptUrl}`} target="_blank" rel="noreferrer" style={{ display: 'block', marginBottom: '16px' }}>
-                  <img src={`http://localhost:5000${a.receiptUrl}`} alt="Receipt" style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #eee' }} />
+                <a href={`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}${a.receiptUrl}`} target="_blank" rel="noreferrer" style={{ display: 'block', marginBottom: '16px' }}>
+                  <img src={`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}${a.receiptUrl}`} alt="Receipt" style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #eee' }} />
                 </a>
               )}
               <div className="row" style={{ gap: '8px' }}>

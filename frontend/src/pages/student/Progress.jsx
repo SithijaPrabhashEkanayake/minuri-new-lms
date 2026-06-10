@@ -10,7 +10,7 @@ export function Progress() {
   useEffect(() => {
     const fetchProgress = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/progress/my-progress', {
+        const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/progress/my-progress`, {
           headers: {
             'Authorization': `Bearer ${user?.token}`
           }

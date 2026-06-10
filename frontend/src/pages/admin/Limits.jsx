@@ -10,7 +10,7 @@ export function Limits() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/modules')
+    fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/modules`)
       .then(res => res.json())
       .then(data => {
         setModules(data);
@@ -35,7 +35,7 @@ export function Limits() {
   const handleSave = async (id, newLimit) => {
     setSaving(id);
     try {
-      const res = await fetch(`http://localhost:5000/api/modules/${id}/limit`, {
+      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/modules/${id}/limit`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -16,7 +16,7 @@ export function Quizzes() {
 
   const fetchQuizzes = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/quizzes', {
+      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/quizzes`, {
         headers: { Authorization: `Bearer ${user?.token}` }
       });
       if (res.ok) {
@@ -33,7 +33,7 @@ export function Quizzes() {
   const loadQuiz = async (quizId) => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/quizzes/${quizId}`, {
+      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/quizzes/${quizId}`, {
         headers: { Authorization: `Bearer ${user?.token}` }
       });
       if (res.ok) {
