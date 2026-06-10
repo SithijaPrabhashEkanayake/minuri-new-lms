@@ -14,7 +14,7 @@ export function LiveClasses() {
 
   const fetchSessions = async () => {
     try {
-      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/live/student`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/live/student`, {
         headers: { 'Authorization': `Bearer ${user?.token}` }
       });
       const data = await res.json();
@@ -30,7 +30,7 @@ export function LiveClasses() {
 
   const joinSession = async (id) => {
     try {
-      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/live/join/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/live/join/${id}`, {
         headers: { 'Authorization': `Bearer ${user?.token}` }
       });
       const data = await res.json();

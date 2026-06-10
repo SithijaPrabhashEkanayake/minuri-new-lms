@@ -14,7 +14,7 @@ export function Library() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/modules/enrolled`, {
+    fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/modules/enrolled`, {
       headers: { 'Authorization': `Bearer ${user?.token}` }
     })
       .then(async (res) => {

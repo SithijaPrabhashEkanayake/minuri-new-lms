@@ -19,8 +19,8 @@ export function Stream() {
   const fetchData = async () => {
     try {
       const [modRes, sessRes] = await Promise.all([
-        fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/modules`),
-        fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/live/teacher`, {
+        fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/modules`),
+        fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/live/teacher`, {
           headers: { 'Authorization': `Bearer ${user?.token}` }
         })
       ]);
@@ -45,7 +45,7 @@ export function Stream() {
 
     setIsStarting(true);
     try {
-      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/live`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/live`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export function Stream() {
   const stopSession = async (id) => {
     if (!window.confirm('Are you sure you want to stop this live class?')) return;
     try {
-      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/live/${id}/stop`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/live/${id}/stop`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${user?.token}` }
       });

@@ -11,7 +11,7 @@ export function Users() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/users`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/users`, {
         headers: {
           'Authorization': `Bearer ${user?.token}`
         }
@@ -36,7 +36,7 @@ export function Users() {
   const handleStatusToggle = async (id, currentStatus) => {
     const newStatus = currentStatus === 'locked' ? 'active' : 'locked';
     try {
-      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/users/${id}/status`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/users/${id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ export function Users() {
   const handleResetPassword = async (id) => {
     if (!window.confirm('Generate a password reset link for this user?')) return;
     try {
-      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/users/${id}/reset-password`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/users/${id}/reset-password`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${user?.token}`

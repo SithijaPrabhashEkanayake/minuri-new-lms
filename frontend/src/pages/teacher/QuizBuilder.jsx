@@ -31,8 +31,8 @@ export function QuizBuilder() {
   const fetchData = async () => {
     try {
       const [modRes, quizRes] = await Promise.all([
-        fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/modules`),
-        fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/quizzes`, {
+        fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/modules`),
+        fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/quizzes`, {
           headers: { Authorization: `Bearer ${user?.token}` }
         })
       ]);
@@ -103,7 +103,7 @@ export function QuizBuilder() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/quizzes`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/quizzes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ export function QuizBuilder() {
   const handleDeleteQuiz = async (id) => {
     if (!window.confirm('Are you sure you want to delete this quiz?')) return;
     try {
-      await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/quizzes/${id}`, {
+      await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/quizzes/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${user?.token}` }
       });

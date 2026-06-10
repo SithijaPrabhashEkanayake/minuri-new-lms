@@ -10,7 +10,7 @@ export function AISources() {
 
   const fetchSources = async () => {
     try {
-      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/ai-sources`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/ai-sources`, {
         headers: {
           'Authorization': `Bearer ${user?.token}`
         }
@@ -39,7 +39,7 @@ export function AISources() {
       // Simulate extracting pages from file size (e.g. 1 page per 50KB)
       const estimatedPages = Math.max(1, Math.round(file.size / 50000));
 
-      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/ai-sources`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/ai-sources`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -10,7 +10,7 @@ export function Catalog() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/modules`) // Assuming this gets all published modules
+    fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/modules`) // Assuming this gets all published modules
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -46,7 +46,7 @@ export function Catalog() {
     formData.append('receipt', receiptFile);
 
     try {
-      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/enrollments`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/enrollments`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${user?.token}`

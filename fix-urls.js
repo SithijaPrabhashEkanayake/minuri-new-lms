@@ -27,21 +27,14 @@ files.forEach(file => {
     let content = fs.readFileSync(file, 'utf8');
     let originalContent = content;
 
-    // Replace single quotes 'http://localhost:5000...' with backticks
-    content = content.replace(/'http:\/\/localhost:5000([^']*)'/g, "`\\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}$1`");
-    
-    // Replace double quotes "http://localhost:5000..." with backticks
-    content = content.replace(/"http:\/\/localhost:5000([^"]*)"/g, "`\\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}$1`");
-
-    // Replace occurrences that are already inside backticks `http://localhost:5000...`
-    // We just replace the http://localhost:5000 part with the variable expression
-    content = content.replace(/`http:\/\/localhost:5000/g, "`\\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}");
+    // Remove the backslash before the dollar sign
+    content = content.replace(/\\\${import\.meta\.env\.VITE_API_BASE_URL/g, "${import.meta.env.VITE_API_BASE_URL");
 
     if (content !== originalContent) {
         fs.writeFileSync(file, content, 'utf8');
         changedFiles++;
-        console.log(`Updated: ${file}`);
+        console.log(`Fixed: ${file}`);
     }
 });
 
-console.log(`\nFinished! Updated ${changedFiles} files.`);
+console.log(`\nFinished! Fixed ${changedFiles} files.`);

@@ -10,7 +10,7 @@ export const VdoPlayer = ({ videoId, token, onViewCountUpdate }) => {
 
     const fetchOtp = async () => {
       try {
-        const response = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/video/otp`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/video/otp`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

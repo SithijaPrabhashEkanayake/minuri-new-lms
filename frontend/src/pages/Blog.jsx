@@ -8,7 +8,7 @@ export function Blog() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/blogs`);
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/blogs`);
         if (res.ok) {
           const data = await res.json();
           setBlogs(data);

@@ -19,7 +19,7 @@ export function CMS() {
 
   const fetchBlogs = async () => {
     try {
-      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/blogs`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/blogs`, {
         headers: {
           'Authorization': `Bearer ${user?.token}`
         }
@@ -45,7 +45,7 @@ export function CMS() {
     }
 
     const payload = { title, category: cat, body };
-    const url = editingId ? `\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/blogs/${editingId}` : `\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/blogs`;
+    const url = editingId ? `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/blogs/${editingId}` : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/blogs`;
     const method = editingId ? 'PUT' : 'POST';
 
     try {
@@ -82,7 +82,7 @@ export function CMS() {
   const deletePost = async (id) => {
     if (!window.confirm('Are you sure you want to delete this blog post?')) return;
     try {
-      const res = await fetch(`\${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/blogs/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/blogs/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${user?.token}`
