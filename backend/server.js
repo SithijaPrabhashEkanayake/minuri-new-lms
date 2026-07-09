@@ -30,7 +30,12 @@ app.use(helmet({
 
 // ── CORS — restrict to frontend origin ──────────────────────────────
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://minuri-new-lms.vercel.app',
+    process.env.CORS_ORIGIN
+  ].filter(Boolean),
   credentials: true,
 }));
 
