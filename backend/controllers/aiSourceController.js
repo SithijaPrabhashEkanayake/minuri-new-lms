@@ -10,7 +10,7 @@ const getAiSources = async (req, res) => {
     });
     res.json(sources);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -35,7 +35,7 @@ const addAiSource = async (req, res) => {
 
     res.status(201).json(newSource);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: 'Failed to add AI source.' });
   }
 };
 

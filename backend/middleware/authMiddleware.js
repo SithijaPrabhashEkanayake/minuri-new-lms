@@ -4,15 +4,21 @@ const { prisma } = require('../config/db');
 
 const client = jwksClient({
   jwksUri: `${process.env.SUPABASE_URL}/auth/v1/.well-known/jwks.json`,
-  cache: false
+  cache: true,
+  rateLimit: true,
+  jwksRequestsPerMinute: 10,
 });
 
 function getSigningKey(header, callback) {
+  if (header.alg === 'HS256') {
+    if (process.env.JWT_SECRET) {
+      return callback(null, process.env.JWT_SECRET);
+    }
+    return callback(new Error('HS256 algorithm requested but JWT_SECRET is not configured'));
+  }
+
   client.getSigningKey(header.kid, (err, key) => {
     if (err) {
-      if (header.alg === 'HS256' && process.env.JWT_SECRET) {
-        return callback(null, process.env.JWT_SECRET);
-      }
       return callback(err);
     }
     const signingKey = key.getPublicKey();

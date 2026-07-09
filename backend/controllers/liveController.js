@@ -1,4 +1,5 @@
 const { prisma } = require('../config/db');
+const crypto = require('crypto');
 
 // @desc    Start a new live session
 // @route   POST /api/live
@@ -11,8 +12,8 @@ const startLiveSession = async (req, res) => {
       return res.status(400).json({ message: 'Topic and at least one Module are required.' });
     }
 
-    // Auto-generate a secure, unique Jitsi Meet link
-    const uniqueRoomId = 'ICT-Academy-' + Math.random().toString(36).substring(2, 12);
+    // Auto-generate a cryptographically secure, unique Jitsi Meet link
+    const uniqueRoomId = 'ICT-Academy-' + crypto.randomUUID();
     const jitsiLink = `https://meet.jit.si/${uniqueRoomId}`;
 
     const session = await prisma.liveSession.create({
@@ -32,7 +33,7 @@ const startLiveSession = async (req, res) => {
 
     res.status(201).json(session);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -50,7 +51,7 @@ const stopLiveSession = async (req, res) => {
 
     res.json(session);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -68,7 +69,7 @@ const getTeacherLiveSessions = async (req, res) => {
     });
     res.json(sessions);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -108,7 +109,7 @@ const getStudentLiveSessions = async (req, res) => {
 
     res.json(activeSessions);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -146,7 +147,7 @@ const joinLiveSession = async (req, res) => {
     // Give them the zoom link
     res.json({ zoomLink: session.zoomLink });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 

@@ -153,12 +153,15 @@ export const AuthProvider = ({ children }) => {
       
       if (!data.user) return { success: false, message: 'Registration failed.' };
 
-      // 2. Complete LMS Profile in Backend
+      // 2. Complete LMS Profile in Backend (route is now protected — send JWT)
+      const session = data.session;
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/auth/complete-profile`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify({
-          id: data.user.id,
           name: userData.name,
           email: userData.email,
           phone: userData.phone,

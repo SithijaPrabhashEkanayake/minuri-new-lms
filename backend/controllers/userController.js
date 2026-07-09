@@ -17,7 +17,7 @@ const getUsers = async (req, res) => {
     });
     res.json(users);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -41,7 +41,7 @@ const updateUserStatus = async (req, res) => {
 
     res.json(updatedUser);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: 'Failed to update user status.' });
   }
 };
 
@@ -63,12 +63,13 @@ const resetUserPassword = async (req, res) => {
     });
 
     if (error) {
-      return res.status(400).json({ message: error.message });
+      return res.status(400).json({ message: 'Failed to generate password reset link.' });
     }
 
-    res.json({ link: data.properties.action_link });
+    // The recovery link is sent via email by Supabase; do NOT return it in the API response
+    res.json({ message: 'Password reset link has been sent to the user\'s email.' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 

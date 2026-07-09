@@ -10,7 +10,7 @@ const getBlogs = async (req, res) => {
     });
     res.json(blogs);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -49,7 +49,7 @@ const createBlog = async (req, res) => {
 
     res.status(201).json(newBlog);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: 'Failed to create blog post.' });
   }
 };
 
@@ -76,7 +76,7 @@ const updateBlog = async (req, res) => {
 
     res.json(updatedBlog);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: 'Failed to update blog post.' });
   }
 };
 
@@ -94,7 +94,7 @@ const deleteBlog = async (req, res) => {
     await prisma.blog.delete({ where: { id: req.params.id } });
     res.json({ message: 'Blog removed' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 

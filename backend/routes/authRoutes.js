@@ -4,7 +4,8 @@ const { completeProfile, registerStaff, getMe } = require('../controllers/authCo
 const { protect } = require('../middleware/authMiddleware');
 
 // Called immediately after Supabase auth.signUp succeeds on the frontend (Students)
-router.post('/complete-profile', completeProfile);
+// Protected: user ID is taken from the verified JWT, not the request body
+router.post('/complete-profile', protect, completeProfile);
 
 // Register a new Admin or Teacher (protected by invite code)
 router.post('/register-staff', registerStaff);

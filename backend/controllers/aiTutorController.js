@@ -13,6 +13,11 @@ const askQuestion = async (req, res) => {
       return res.status(400).json({ message: 'Query is required' });
     }
 
+    // Prevent prompt injection / cost abuse with length cap
+    if (query.length > 2000) {
+      return res.status(400).json({ message: 'Query is too long. Maximum 2000 characters allowed.' });
+    }
+
     if (!groq) {
       // Fallback if the user hasn't set up their API key yet.
       return res.json({

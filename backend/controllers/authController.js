@@ -13,7 +13,13 @@ const supabaseAdmin = createClient(
 // @access  Public
 const completeProfile = async (req, res) => {
   try {
-    const { id, name, email, phone, grade, consentGiven, classType, medium, institution } = req.body;
+    // User ID comes from the verified JWT (set by protect middleware), NOT from the body
+    const id = req.user?.id;
+    const { name, email, phone, grade, consentGiven, classType, medium, institution } = req.body;
+
+    if (!id) {
+      return res.status(401).json({ message: 'Authentication required.' });
+    }
 
     if (!consentGiven) {
       return res.status(400).json({ message: 'Parental consent is required (PDPA compliance)' });
@@ -64,7 +70,7 @@ const completeProfile = async (req, res) => {
     });
   } catch (error) {
     console.error('Profile Creation Error:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An error occurred while creating your profile.' });
   }
 };
 
@@ -146,7 +152,7 @@ const registerStaff = async (req, res) => {
     });
   } catch (error) {
     console.error('Staff Registration Error:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An error occurred during staff registration.' });
   }
 };
 
@@ -170,7 +176,7 @@ const getMe = async (req, res) => {
       grade: user.grade
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 

@@ -11,7 +11,7 @@ const getModules = async (req, res) => {
     });
     res.json(modules);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -38,7 +38,7 @@ const createModule = async (req, res) => {
 
     res.status(201).json(newModule);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: 'Failed to create module.' });
   }
 };
 
@@ -81,7 +81,7 @@ const getEnrolledModules = async (req, res) => {
     const modules = enrollments.map(e => e.module);
     res.json(modules);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -107,7 +107,7 @@ const saveVideo = async (req, res) => {
 
     res.status(201).json(newVideo);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: 'Failed to save video.' });
   }
 };
 
@@ -131,7 +131,7 @@ const updateModuleLimit = async (req, res) => {
     res.json(updatedModule);
   } catch (error) {
     console.error('Error in updateModuleLimit:', error);
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: 'Failed to update module limit.' });
   }
 };
 

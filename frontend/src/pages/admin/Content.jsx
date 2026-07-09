@@ -22,7 +22,6 @@ export function Content() {
       .then(res => res.json())
       .then(data => {
         setModules(data);
-        if (data.length > 0) setModuleSearchText(data[0].title);
       })
       .catch(err => console.error('Error fetching modules:', err));
   }, []);

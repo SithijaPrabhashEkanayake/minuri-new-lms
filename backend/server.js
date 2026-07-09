@@ -2,7 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const dotenv = require('dotenv');
+const rateLimit = require('express-rate-limit');
 const { connectDB } = require('./config/db');
+const { protect } = require('./middleware/authMiddleware');
 
 // Load env vars
 dotenv.config();
@@ -12,12 +14,52 @@ connectDB();
 
 const app = express();
 
-// Security and middleware
-app.use(helmet());
-app.use(cors());
-app.use(express.json());
+// ── Security Headers ────────────────────────────────────────────────
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "blob:"],
+      connectSrc: ["'self'", process.env.SUPABASE_URL || ''].filter(Boolean),
+    },
+  },
+  crossOriginResourcePolicy: { policy: 'same-origin' },
+}));
+
+// ── CORS — restrict to frontend origin ──────────────────────────────
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  credentials: true,
+}));
+
+// ── Body parsing with size limit ────────────────────────────────────
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+
+// ── Global rate limiter ─────────────────────────────────────────────
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100,                  // 100 requests per window per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many requests, please try again later.' },
+});
+app.use(globalLimiter);
+
+// ── Stricter auth rate limiter (applied to auth routes below) ───────
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many authentication attempts, please try again later.' },
+});
+
+// ── Protected static files — receipts require authentication ────────
 const path = require('path');
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', protect, express.static(path.join(__dirname, 'uploads'), { index: false }));
 
 // Basic health route
 app.get('/health', (req, res) => {
@@ -39,7 +81,7 @@ const enrollmentRoutes = require('./routes/enrollmentRoutes');
 const liveRoutes = require('./routes/liveRoutes');
 
 // Mount routers
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/modules', moduleRoutes);
 app.use('/api/video', videoRoutes);
 app.use('/api/users', userRoutes);

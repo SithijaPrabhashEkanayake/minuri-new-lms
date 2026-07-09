@@ -11,7 +11,7 @@ const getQuizzes = async (req, res) => {
     });
     res.json(quizzes);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -27,7 +27,7 @@ const getQuizById = async (req, res) => {
     if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
     res.json(quiz);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -57,7 +57,7 @@ const createQuiz = async (req, res) => {
 
     res.status(201).json(quiz);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -77,7 +77,7 @@ const updateQuiz = async (req, res) => {
     });
     res.json(quiz);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
@@ -89,7 +89,7 @@ const deleteQuiz = async (req, res) => {
     await prisma.quiz.delete({ where: { id: req.params.id } });
     res.json({ message: 'Quiz removed' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'An internal server error occurred.' });
   }
 };
 
