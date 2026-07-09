@@ -57,7 +57,7 @@ export function AdminLayout() {
           </button>
           <h2 style={{ flex: 1 }}>Admin</h2>
           <div className="avatar" style={{ background: 'linear-gradient(135deg,#e2607a,#c14d7c)' }}>{user?.name?.charAt(0) || 'A'}</div>
-          <span style={{ fontWeight: 600, fontSize: '14px' }}>{user?.name || 'Admin'}</span>
+
         </div>
         <main style={{ marginTop: '20px' }}>
           <Outlet />

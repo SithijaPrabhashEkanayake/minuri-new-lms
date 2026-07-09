@@ -55,7 +55,7 @@ export function DashboardLayout() {
           <h2 style={{ flex: 1 }}>Dashboard</h2>
           <div className="bell"><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Objects/Megaphone.webp" alt="Megaphone" width="25" height="25" /></div>
           <div className="avatar">{user?.name?.charAt(0) || 'U'}</div>
-          <span style={{ fontWeight: 600, fontSize: '14px' }}>{user?.name || 'Student'}</span>
+
         </div>
         <main style={{ marginTop: '20px' }}>
           <Outlet />

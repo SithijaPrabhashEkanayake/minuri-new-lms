@@ -45,7 +45,7 @@ export function TeacherLayout() {
           </button>
           <h2 style={{ flex: 1 }}>Teacher</h2>
           <div className="avatar" style={{ background: 'linear-gradient(135deg,#f8d49a,#f5c98a)' }}>{user?.name?.charAt(0) || 'T'}</div>
-          <span style={{ fontWeight: 600, fontSize: '14px' }}>{user?.name || 'Teacher'}</span>
+
         </div>
         <main style={{ marginTop: '20px' }}>
           <Outlet />
