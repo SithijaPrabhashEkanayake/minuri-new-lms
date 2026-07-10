@@ -2,6 +2,11 @@
 
 # dependencies
 node_modules/
+dist/
+build/
+.env
+.env.*
+!.env.example
 /.pnp
 .pnp.*
 .yarn/*
@@ -22,6 +27,9 @@ node_modules/
 
 # misc
 .DS_Store
+*.log
+supabase_docker/
+supabase_docker2/
 *.pem
 
 # debug
