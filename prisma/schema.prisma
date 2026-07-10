@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  permissions String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  users       User[]
+}
+
+model User {
+  id           String       @id @default(uuid())
+  name         String
+  email        String       @unique
+  password     String
+  phoneHash    String
+  grade        Int?
+  roleId       String
+  consentGiven Boolean      @default(false)
+  consentTs    DateTime?
+  mfaEnabled   Boolean      @default(false)
+  mfaSecret    String?
+  status       String       @default("active")
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  classType    String?
+  institution  String?
+  medium       String?
+  enrollments  Enrollment[]
+  modules      Module[]
+  role         Role          @relation(fields: [roleId], references: [id])
+  videoViews   VideoView[]
+  liveSessions LiveSession[] @relation("TeacherLiveSessions")
+}
+
+model Enrollment {
+  id          String   @id @default(uuid())
+  studentId   String
+  moduleId    String
+  status      String   @default("pending")
+  paymentRef  String?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  classType   String?
+  grade       Int?
+  institution String?
+  medium      String?
+  receiptUrl  String?
+  module      Module   @relation(fields: [moduleId], references: [id])
+  student     User     @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, moduleId])
+}
+
+model Module {
+  id           String       @id @default(uuid())
+  title        String
+  subject      String       @default("ICT")
+  grade        Int
+  price        Int
+  durationSec  Int          @default(0)
+  previewUrl   String?
+  instructorId String
+  published    Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  viewLimit    Int          @default(8)
+  enrollments  Enrollment[]
+  instructor   User         @relation(fields: [instructorId], references: [id])
+  quizzes      Quiz[]
+  videos       Video[]
+  liveSessions LiveSession[]
+}
+
+model Video {
+  id           String      @id @default(uuid())
+  title        String
+  vdoCipherId  String      @unique
+  thumbnailUrl String?
+  moduleId     String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  module       Module      @relation(fields: [moduleId], references: [id])
+  views       VideoView[]
+}
+
+model VideoView {
+  id        String   @id @default(uuid())
+  userId    String
+  videoId   String
+  viewCount Int      @default(0)
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  video     Video    @relation(fields: [videoId], references: [id])
+
+  @@unique([userId, videoId])
+}
+
+model LiveSession {
+  id          String   @id @default(uuid())
+  topic       String
+  zoomLink    String
+  status      String   @default("live")
+  teacherId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  modules     Module[]
+  teacher     User     @relation("TeacherLiveSessions", fields: [teacherId], references: [id])
+}
+
+model AiSource {
+  id        String   @id @default(uuid())
+  name      String
+  pages     Int
+  status    String   @default("Indexed")
+  content   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Blog {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  title     String
+  category  String
+  readTime  String   @default("3 min")
+  grad      String
+  body      String
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Quiz {
+  id        String     @id @default(uuid())
+  title     String
+  timeLimit Int
+  moduleId  String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  questions Question[]
+  module    Module?    @relation(fields: [moduleId], references: [id])
+}
+
+model Question {
+  id            String   @id @default(uuid())
+  text          String
+  options       String[]
+  correctAnswer String
+  quizId        String
+  createdAt     DateTime @default(now())
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+}
